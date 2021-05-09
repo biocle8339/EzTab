@@ -1,0 +1,33 @@
+{
+  "name": "eztab",
+  "version": "1.0.0",
+  "description": "Customize your own tab setting",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/biocle8339/EzTab.git"
+  },
+  "keywords": [
+    "chrome",
+    "extension",
+    "tab"
+  ],
+  "author": "biocle8339",
+  "bugs": {
+    "url": "https://github.com/biocle8339/EzTab/issues"
+  },
+  "homepage": "https://github.com/biocle8339/EzTab#readme",
+  "dependencies": {
+    "@types/chrome": "0.0.137",
+    "types": "^0.1.1"
+  },
+  "devDependencies": {
+    "eslint": "^7.26.0",
+    "eslint-config-prettier": "^8.3.0",
+    "eslint-plugin-prettier": "^3.4.0",
+    "prettier": "^2.2.1"
+  }
+}

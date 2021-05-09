@@ -1,0 +1,14 @@
+{
+  "name": {
+    "message": "EzTab"
+  },
+  "description": {
+    "message": "Customize Your Tab Setting"
+  },
+  "contextTitle": {
+    "message": "should be changed later"
+  },
+  "contextRemove": {
+    "message": "should be changed later"
+  }
+}
