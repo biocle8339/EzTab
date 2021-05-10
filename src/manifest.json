@@ -4,22 +4,22 @@
   "version": "1.0.0",
   "description": "__MSG_description__",
   "icons": {
-    "128": "images/main-icon128.png",
-    "48": "images/main-icon48.png",
-    "16": "images/main-icon16.png"
+    "128": "images/tab-icon128.png",
+    "48": "images/tab-icon48.png",
+    "16": "images/tab-icon16.png"
   },
   "default_locale": "en",
   "action": {
     "default_icon": {
-      "128": "images/main-icon128.png",
-      "48": "images/main-icon48.png",
-      "16": "images/main-icon16.png"
+      "128": "images/tab-icon128.png",
+      "48": "images/tab-icon48.png",
+      "16": "images/tab-icon16.png"
     },
     "default_title": "EzTab",
     "default_popup": "src/popup.html"
   },
   "background": {
-    "service_worker": "background.js"
+    "service_worker": "src/js/background.js"
   },
   "commands": {
     "saveUrl": {
