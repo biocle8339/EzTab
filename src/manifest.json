@@ -15,19 +15,19 @@
       "48": "images/tab-icon48.png",
       "16": "images/tab-icon16.png"
     },
-    "default_title": "EzTab",
-    "default_popup": "src/popup.html"
+    "default_title": "__MSG_tooltip__",
+    "default_popup": "popup.html"
   },
   "background": {
-    "service_worker": "src/js/background.js"
+    "service_worker": "background.js"
   },
   "commands": {
-    "saveUrl": {
+    "openPopup": {
       "suggested_key": {
-        "default": "Ctrl+Shift+S",
-        "mac": "Command+Shift+S"
+        "default": "Ctrl+E",
+        "mac": "Command+E"
       },
-      "description": "Save Current Url"
+      "description": "Open Popup"
     }
   },
   "permissions": [
@@ -37,8 +37,5 @@
     "storage",
     "notifications",
     "search"
-  ],
-  "host_permissions": [
-    "chrome://favicon/"
   ]
 }

@@ -5,6 +5,9 @@
   "description": {
     "message": "Customize Your Tab Setting"
   },
+  "tooltip": {
+    "message": "should be changed later"
+  },
   "contextTitle": {
     "message": "should be changed later"
   },

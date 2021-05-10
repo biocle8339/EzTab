@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>EzTab</title>
+    <link rel="preconnect" href="https://fonts.gstatic.com" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Jua&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Gaegu:wght@300;400;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" type="text/css" href="styles.css" />
+  </head>
+  <body>
+    <header>
+      <img class="logo" src="./images/logo.png" />
+    </header>
+    <main>
+      <div class="navigation-container">
+        <nav class="navigation">
+          <div class="link-container">
+            <a href="#" class="nav-link">Current Tabs</a>
+            <a href="#" class="nav-link">Tab Groups</a>
+            <a href="#" class="nav-link">Tab Usage</a>
+          </div>
+          <div class="marker"></div>
+        </nav>
+      </div>
+      <div class="contents">
+        <div class="search-container">
+          <input
+            class="search"
+            type="text"
+            placeholder="Search"
+            autocomplete="off"
+          />
+        </div>
+        <div class="tabs-container">
+          <div class="tabs-header">
+            <div class="tabs-name-container"></div>
+            <div class="tabs-save-button-container"></div>
+          </div>
+          <div class="tabs-list">
+            <div class="tabs-entry">
+              <div class="favicon-container"></div>
+              <div class="tab-title-container"></div>
+              <div class="entry-buttons-container">
+                <div class="copy-button-container"></div>
+                <div class="delete-button-container"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+    <script src="background.js"></script>
+  </body>
+</html>

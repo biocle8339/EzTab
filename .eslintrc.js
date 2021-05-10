@@ -4,6 +4,7 @@ module.exports = {
     browser: true,
     es2021: true,
     node: true,
+    webExtensions: true,
   },
   extends: ["eslint:recommended", "plugin:prettier/recommended"],
   parserOptions: {
