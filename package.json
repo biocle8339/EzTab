@@ -4,7 +4,9 @@
   "description": "Customize your own tab setting",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "webpack-cli serve --mode development --watch",
+    "build": "webpack --mode=production",
+    "test": "jest"
   },
   "repository": {
     "type": "git",
@@ -25,9 +27,16 @@
     "types": "^0.1.1"
   },
   "devDependencies": {
+    "copy-webpack-plugin": "^8.1.1",
+    "css-loader": "^5.2.4",
     "eslint": "^7.26.0",
     "eslint-config-prettier": "^8.3.0",
     "eslint-plugin-prettier": "^3.4.0",
-    "prettier": "^2.2.1"
+    "html-webpack-plugin": "^5.3.1",
+    "mini-css-extract-plugin": "^1.6.0",
+    "prettier": "^2.2.1",
+    "style-loader": "^2.0.0",
+    "webpack": "^5.36.2",
+    "webpack-cli": "^4.7.0"
   }
 }
