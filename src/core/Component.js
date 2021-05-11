@@ -3,11 +3,11 @@ import parseHTML from "../utils/parseHTML.js";
 class Component {
   $target;
   state;
-  props;
+  props = { index: 0 };
 
   constructor($target, props) {
     this.$target = $target;
-    this.props = props;
+    this.props = { ...this.props, ...props };
     this.setup();
     this.setEvent();
     this.render();

@@ -11,8 +11,9 @@ class Contents extends Component {
     const $contents = document.querySelector(".contents");
 
     new Search($contents);
-    new TabsContainer($contents);
-    new TabsContainer($contents);
+
+    const arr = [1, 2, 3];
+    arr.map((el, i) => new TabsContainer($contents, { el, index: i }));
   }
 }
 
