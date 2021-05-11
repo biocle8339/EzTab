@@ -8,8 +8,8 @@ class TabsContainer extends Component {
   }
 
   mounted() {
-    const $tabsContainerArr = document.querySelectorAll(".tabs-container");
-    const $tabsContainer = $tabsContainerArr[$tabsContainerArr.length - 1];
+    const { el, index } = this.props;
+    const $tabsContainer = document.querySelectorAll(".tabs-container")[index];
 
     new TabsHeader($tabsContainer);
     new TabList($tabsContainer);

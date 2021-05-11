@@ -7,16 +7,14 @@ class TabList extends Component {
   }
 
   mounted() {
-    const $tabListArr = document.querySelectorAll(".tab-list");
-    const $tabList = $tabListArr[$tabListArr.length - 1];
+    const $tabList = document.querySelector(".tab-list");
 
     // 나중에 여러개 대비해서
     // const { tabs } = this.props;
     // tabs.map((tab) => new TabEntry($tabList, tab));
 
     const tabs = [1, 2, 3, 4, 5];
-    tabs.map((el) => new TabEntry($tabList, el));
-    //new TabEntry($tabList);
+    tabs.map((el, i) => new TabEntry($tabList, { el, index: i }));
   }
 }
 
