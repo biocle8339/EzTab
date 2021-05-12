@@ -4,6 +4,7 @@
   --main-gray: #e5e5e5;
   --main-indigo: #14213d;
   --main-orange: #fca311;
+  --main-red: red;
   --gaegu: "Gaegu", cursive;
   --jua: "Jua", sans-serif;
 }
@@ -17,12 +18,12 @@ body {
   margin: 0;
   width: 500px;
   height: 500px;
+  background: var(--main-gray);
 }
 
 header {
   margin: 0;
   height: 60px;
-  background: var(--main-gray);
 }
 
 .logo {
@@ -91,7 +92,7 @@ header {
   box-sizing: border-box;
 }
 
-.tabs-container {
+.current-tabs {
   margin-bottom: 20px;
   width: 88%;
   border: 1px solid black;
@@ -171,4 +172,63 @@ header {
   width: 35px;
   height: 40px;
   cursor: pointer;
+}
+
+.tab-groups {
+  margin-top: 10px;
+}
+
+.buttons-container {
+  display: flex;
+  margin-top: 20px;
+}
+
+.button {
+  padding: 18px;
+  border: none;
+  outline: none;
+  text-align: center;
+  font-size: 15px;
+  cursor: pointer;
+}
+
+.delete {
+  width: 15%;
+  background-color: #f1c47b;
+  color: var(--main-white);
+}
+
+.collapsible {
+  width: 85%;
+  background-color: #777;
+  color: var(--main-white);
+}
+
+.delete:hover {
+  background-color: var(--main-orange);
+}
+
+.active,
+.collapsible:hover {
+  background-color: #555;
+}
+
+.collapsible:after {
+  float: right;
+  margin-left: 5px;
+  content: "\002B";
+  color: var(--main-white);
+  font-weight: bold;
+}
+
+.active:after {
+  content: "\2212";
+}
+
+.expansion {
+  padding: 0 18px;
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.2s ease-out;
+  background-color: #f1f1f1;
 }

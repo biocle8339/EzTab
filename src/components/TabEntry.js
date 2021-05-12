@@ -2,7 +2,7 @@ import Component from "../core/Component.js";
 
 class TabEntry extends Component {
   template() {
-    const el = this.props;
+    const { el } = this.props;
 
     return `
     <div class="tab-entry ${el === 1 ? "current" : ""}">

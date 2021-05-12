@@ -1,6 +1,7 @@
 import Component from "../core/Component.js";
 import Search from "./Search.js";
-import TabsContainer from "./TabsContainer.js";
+import CurrentTabs from "./CurrentTabs.js";
+import TabGroups from "./TabGroups.js";
 
 class Contents extends Component {
   template() {
@@ -8,12 +9,14 @@ class Contents extends Component {
   }
 
   mounted() {
-    const $contents = document.querySelector(".contents");
+    const $contents = this.$target.querySelector(".contents");
 
-    new Search($contents);
+    // new Search($contents);
 
-    const arr = [1, 2, 3];
-    arr.map((el, i) => new TabsContainer($contents, { el, index: i }));
+    // const arr = [1, 2, 3];
+    // arr.map((el, i) => new CurrentTabs($contents, { el, index: i }));
+
+    new TabGroups($contents);
   }
 }
 
