@@ -9,14 +9,18 @@ class Contents extends Component {
   }
 
   mounted() {
+    const { tabName } = this.props;
     const $contents = this.$target.querySelector(".contents");
 
-    // new Search($contents);
+    if (tabName === "tabgroups") {
+      new TabGroups($contents);
+      return;
+    }
 
-    // const arr = [1, 2, 3];
-    // arr.map((el, i) => new CurrentTabs($contents, { el, index: i }));
+    new Search($contents);
 
-    new TabGroups($contents);
+    const arr = [1, 2, 3];
+    arr.map((el, i) => new CurrentTabs($contents, { el, index: i }));
   }
 }
 
