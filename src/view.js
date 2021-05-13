@@ -1,5 +1,3 @@
-import parseHTML from "./utils/parseHTML.js";
-
 class View {
   constructor() {
     this.$carousel = document.querySelector(".carousel");
@@ -105,13 +103,77 @@ class View {
             </div>
           </div>
           <div class="tab-list">
-          ${datum.map((data) => generateTabEntryTemplate(data))}
+            ${datum.map((data) => generateTabEntryTemplate(data)).join("")}
           </div>
         </div>
         `;
         //tab-list에 multiple tab-entry 포함시키기
 
-        this.$currentTabs.appendChild(parseHTML(template));
+        this.$currentTabs.innerHTML = template;
+        break;
+      }
+      case "Tab Groups": {
+        const generateTabGroupTemplate = (data) => {
+          return `
+          <div class="tab-group">
+            <div class="buttons-container">
+              <button class="delete group-button">X</button>
+              <button class="collapsible group-button">Open Section ${data}</button>
+            </div>
+            <div class="expansion">
+              <div class="tab-list">
+                ${datum.map((data) => generateTabEntryTemplate(data)).join("")}
+              </div>
+            </div>
+          </div>
+          `;
+        };
+        const generateTabEntryTemplate = (data) => {
+          return `
+          <div class="tab-entry ${!data ? "current" : ""}">
+            <div class="favicon-container"></div>
+            <div class="tab-title-container"></div>
+            <div class="entry-buttons-container">
+              <div class="copy-button-container">
+                <img class="icon copy-icon" src="./images/copy-icon.png" />
+              </div>
+              <div class="delete-button-container">
+                <img class="icon delete-icon" src="./images/delete-icon.png" />
+              </div>
+            </div>
+          </div>
+          `;
+        };
+        datum = [1, 2, 3];
+        const template = `
+        <div class="tab-groups">
+          ${datum.map((data) => generateTabGroupTemplate(data)).join("")}
+        </div>
+        `;
+
+        this.$tabGroups.innerHTML = template;
+        const $collapsibles = document.querySelectorAll(".collapsible");
+        const $deletes = document.querySelectorAll(".delete");
+
+        $collapsibles.forEach(($collapsible) => {
+          $collapsible.addEventListener("click", ({ target }) => {
+            target.classList.toggle("active");
+            const $expansion = target.parentNode.nextElementSibling;
+
+            if ($expansion.style.maxHeight) {
+              $expansion.style.maxHeight = null;
+            } else {
+              $expansion.style.maxHeight = $expansion.scrollHeight + "px";
+            }
+          });
+        });
+
+        $deletes.forEach(($delete) => {
+          $delete.addEventListener("click", ({ target }) => {
+            target.closest(".tab-group").remove();
+          });
+        });
+
         break;
       }
       default:

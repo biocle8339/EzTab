@@ -10,13 +10,19 @@ class Controller {
       this._setTabState(tabName);
     });
 
-    // this.view.bind(this.viewEvents[1], () => {
-    //   this.startAnimation();
-    // });
+    this.view.bind(this.events[1], (tabName) => {
+      this._setTabState(tabName);
+    });
 
-    // this.view.bind(this.viewEvents[2], () => {
-    //   this.startAnimation();
-    // });
+    this.view.bind(this.events[2], () => {
+      this.startAnimation();
+    });
+
+    this._setInitialState();
+  }
+
+  _setInitialState() {
+    this.view.render("Current Tabs");
   }
 
   _setTabState(tabName) {

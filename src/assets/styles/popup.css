@@ -201,7 +201,8 @@ header {
   margin-top: 20px;
 }
 
-.button {
+/*tabGroups용 버튼 차후 수정예정 */
+.group-button {
   padding: 18px;
   border: none;
   outline: none;
