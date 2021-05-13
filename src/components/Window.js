@@ -4,12 +4,14 @@ import TabsHeader from "./TabsHeader.js";
 
 class CurrentTabs extends Component {
   template() {
-    return `<div class="current-tabs"></div>`;
+    return `<div class="tabs-container"></div>`;
   }
 
   mounted() {
     const { index } = this.props;
-    const $currentTabs = this.$target.querySelectorAll(".current-tabs")[index];
+    const $currentTabs = this.$target.querySelectorAll(".tabs-containers")[
+      index
+    ];
 
     new TabsHeader($currentTabs);
     new TabList($currentTabs);

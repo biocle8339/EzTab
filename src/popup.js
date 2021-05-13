@@ -1,3 +1,9 @@
-import App from "./components/App.js";
+import Controller from "./controller.js";
+import View from "./view.js";
 
-new App(document.querySelector("#root"));
+const init = () => {
+  const view = new View();
+  new Controller(null, view);
+};
+
+init();

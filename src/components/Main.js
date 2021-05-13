@@ -26,9 +26,7 @@ class Main extends Component {
 
   template() {
     return `
-    <main>
-      <div class="navigation-container"></div>
-    </main>
+    
     `;
   }
 

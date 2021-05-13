@@ -16,9 +16,10 @@ html {
 
 body {
   margin: 0;
-  width: 500px;
+  /* width: 500px; */
   height: 500px;
   background: var(--main-gray);
+  overflow-x: hidden;
 }
 
 header {
@@ -67,10 +68,23 @@ header {
   transition: transform 0.3s ease-in-out;
 }
 
-.contents {
+.carousel-container {
+  position: relative;
+}
+
+.carousel {
+  position: absolute;
+  left: 0;
+  display: flex;
+  width: 300%;
+  transition: all 0.3s ease-in-out;
+}
+
+.slide {
   display: flex;
   flex-flow: column;
   align-items: center;
+  width: 500px;
   background: var(--main-gray);
 }
 
@@ -86,7 +100,7 @@ header {
   line-height: 48px;
   height: 48px;
   width: 100%;
-  background-image: url(./images/search-icon.svg);
+  background-image: url(..//images/search-icon.svg);
   background-repeat: no-repeat;
   background-size: 16px;
   background-position-y: center;
@@ -95,7 +109,7 @@ header {
   box-sizing: border-box;
 }
 
-.current-tabs {
+.window {
   margin-bottom: 20px;
   width: 88%;
   border: 1px solid black;
@@ -177,9 +191,10 @@ header {
   cursor: pointer;
 }
 
-.tab-groups {
+/*나중에 css 확인 후 바꾸던지*/
+/* .tab-groups {
   margin-top: 10px;
-}
+} */
 
 .buttons-container {
   display: flex;

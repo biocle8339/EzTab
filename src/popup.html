@@ -12,10 +12,48 @@
       href="https://fonts.googleapis.com/css2?family=Gaegu:wght@300;400;700&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" type="text/css" href="styles.css" />
+    <link rel="stylesheet" type="text/css" href="./assets/styles/popup.css" />
   </head>
   <body>
-    <div id="root"></div>
+    <header>
+      <img class="logo" src="./assets/images/logo.png" />
+    </header>
+    <main>
+      <div class="navigation-container">
+        <nav class="navigation">
+          <div class="link-container">
+            <div class="nav-link" data-distance="0" data-tab="current-tabs">
+              <span>Current Tabs</span>
+            </div>
+            <div class="nav-link" data-distance="170" data-tab="tab-groups">
+              <span>Tab Groups</span>
+            </div>
+            <div class="nav-link" data-distance="328" data-tab="tab-usage">
+              <span>Tab Usage</span>
+            </div>
+          </div>
+          <div class="marker"></div>
+        </nav>
+      </div>
+      <div class="carousel-container">
+        <div class="carousel">
+          <div class="current-tabs slide">
+            <div class="search-container">
+              <input
+                class="search"
+                type="text"
+                placeholder="Search"
+                autocomplete="off"
+              />
+            </div>
+          </div>
+
+          <div class="tab-groups slide">tab-groups to be continued</div>
+
+          <div class="tab-usage slide">tab-usage to be continued</div>
+        </div>
+      </div>
+    </main>
     <script src="popup.js" type="module"></script>
   </body>
 </html>

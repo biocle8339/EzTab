@@ -2,7 +2,7 @@
   "name": "eztab",
   "version": "1.0.0",
   "description": "Customize your own tab setting",
-  "main": "index.js",
+  "main": "popup.js",
   "scripts": {
     "dev": "webpack --mode=development --watch",
     "build": "webpack --mode=production",
@@ -17,7 +17,7 @@
     "extension",
     "tab"
   ],
-  "author": "biocle8339",
+  "author": "Wonho Lee <biocle8339@gmail.com>",
   "bugs": {
     "url": "https://github.com/biocle8339/EzTab/issues"
   },

@@ -3,25 +3,25 @@ import Search from "./Search.js";
 import CurrentTabs from "./CurrentTabs.js";
 import TabGroups from "./TabGroups.js";
 
-class Contents extends Component {
+class carousel extends Component {
   template() {
-    return `<div class="contents"></div>`;
+    return ``;
   }
 
   mounted() {
     const { tabName } = this.props;
-    const $contents = this.$target.querySelector(".contents");
+    const $carousel = this.$target.querySelector(".carousel");
 
     if (tabName === "tabgroups") {
-      new TabGroups($contents);
+      new TabGroups($carousel);
       return;
     }
 
-    new Search($contents);
+    new Search($carousel);
 
     const arr = [1, 2, 3];
-    arr.map((el, i) => new CurrentTabs($contents, { el, index: i }));
+    arr.map((el, i) => new CurrentTabs($carousel, { el, index: i }));
   }
 }
 
-export default Contents;
+export default carousel;

@@ -3,14 +3,7 @@ import Component from "../core/Component.js";
 class Navigation extends Component {
   template() {
     return `
-      <nav class="navigation">
-        <div class="link-container">
-          <div class="nav-link" data-distance="0"><span>Current Tabs</span></div>
-          <div class="nav-link" data-distance="170"><span>Tab Groups</span></div>
-          <div class="nav-link" data-distance="328"><span>Tab Usage</span></div>
-        </div>
-        <div class="marker"></div>
-      </nav>
+      
   `;
   }
 
