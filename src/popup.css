@@ -88,6 +88,10 @@ header {
   background: var(--main-gray);
 }
 
+.current-tabs {
+  margin-top: 5px;
+}
+
 .search-container {
   width: 98%;
   padding: 6px;
@@ -100,7 +104,7 @@ header {
   line-height: 48px;
   height: 48px;
   width: 100%;
-  background-image: url(..//images/search-icon.svg);
+  background-image: url(./assets/images/search-icon.svg);
   background-repeat: no-repeat;
   background-size: 16px;
   background-position-y: center;
@@ -112,7 +116,6 @@ header {
 .window {
   margin-bottom: 20px;
   width: 88%;
-  border: 1px solid black;
 }
 
 .tabs-header {
@@ -151,7 +154,7 @@ header {
   margin-top: 3px;
   height: 40px;
   background: var(--main-white);
-  border: 1px solid red;
+  border: 1px solid black;
   border-radius: 10px;
 }
 
@@ -164,30 +167,34 @@ header {
   background: var(--main-orange);
 }
 
-.favicon-container {
+.tab-title-container {
+  display: flex;
+  align-content: center;
+  width: 361px;
+  height: 100%;
+  padding-left: 7px;
+  padding-top: 4px;
+}
+
+.tab-title {
+  margin: 0;
+  padding-top: 10px;
+  font-family: var(--jua);
+  font-size: 15px;
+}
+
+.entry-button-container {
   width: 30px;
   height: 30px;
-  border: 1px solid black;
-  border-radius: 50%;
-}
-
-.tab-title-container {
-  width: 300px;
-  height: 100%;
-  border: 1px solid blue;
-}
-
-.entry-buttons-container {
+  overflow: hidden;
   display: flex;
-  justify-content: space-between;
-  width: 80px;
-  height: 100%;
-  border: 1px solid green;
+  align-items: center;
+  justify-content: center;
 }
 
 .icon {
-  width: 35px;
-  height: 40px;
+  width: 25px;
+  height: 24px;
   cursor: pointer;
 }
 
