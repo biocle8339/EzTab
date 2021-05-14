@@ -4,16 +4,16 @@
   "version": "1.0.0",
   "description": "__MSG_description__",
   "icons": {
-    "128": "images/tab-icon128.png",
-    "48": "images/tab-icon48.png",
-    "16": "images/tab-icon16.png"
+    "128": "assets/images/tab-icon128.png",
+    "48": "assets/images/tab-icon48.png",
+    "16": "assets/images/tab-icon16.png"
   },
   "default_locale": "en",
   "action": {
     "default_icon": {
-      "128": "images/tab-icon128.png",
-      "48": "images/tab-icon48.png",
-      "16": "images/tab-icon16.png"
+      "128": "assets/images/tab-icon128.png",
+      "48": "assets/images/tab-icon48.png",
+      "16": "assets/images/tab-icon16.png"
     },
     "default_title": "__MSG_tooltip__",
     "default_popup": "popup.html"

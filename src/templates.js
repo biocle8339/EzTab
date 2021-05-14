@@ -1,8 +1,8 @@
-import Component from "../core/Component.js";
+import parseHTML from "./utils/parseHTML";
 
-class TabsHeader extends Component {
-  template() {
-    return `
+export const templates = {
+  currentTabs: parseHTML(`
+  <div class="window">
     <div class="tabs-header">
       <div class="tabs-name-container">
       Current Window
@@ -11,8 +11,8 @@ class TabsHeader extends Component {
         <button class="button save-button">☁️ Save</button>
       </div>
     </div>
-    `;
-  }
-}
-
-export default TabsHeader;
+    <div class="tab-list">
+    </div>
+  </div>
+  `),
+};
