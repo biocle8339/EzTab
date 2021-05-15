@@ -1,0 +1,21 @@
+import generateTabEntryTemplate from "./tabEntry";
+
+const generateTabListTemplate = (tabs, isCurrent) => {
+  return `
+  <div class="window">
+    <div class="tabs-header">
+      <div class="tabs-name-container">
+      ${isCurrent ? "Current" : "Other"} Window (${tabs.length})
+      </div>
+      <div class="tabs-save-button-container">
+        <button class="button save-button">☁️ Save</button>
+      </div>
+    </div>
+    <div class="tab-list">
+      ${tabs.map((tab) => generateTabEntryTemplate(tab)).join("")}
+    </div>
+  </div>
+  `;
+};
+
+export default generateTabListTemplate;

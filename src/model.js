@@ -17,6 +17,17 @@ class Model {
     return { payload: { windows } };
   }
 
+  async getAllGroups() {
+    const groups = [];
+
+    return { payload: { groups } };
+  }
+
+  async removeTab(tabId) {
+    const removed = await chrome.tabs.remove(Number(tabId));
+    console.log(removed);
+  }
+
   //이건 아예 유틸로 빼도될거같은데
   _swap(fromIndex, toIndex, array) {
     const temp = array[fromIndex];

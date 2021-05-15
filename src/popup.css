@@ -49,6 +49,11 @@ header {
   font-size: 20px;
 }
 
+.nav-link {
+  width: 34%;
+  text-align: center;
+}
+
 .nav-link span {
   color: var(--main-black);
   text-transform: uppercase;
@@ -60,7 +65,7 @@ header {
 
 .marker {
   position: relative;
-  left: 17px;
+  left: 10px;
   width: 150px;
   height: 3px;
   background: var(--main-black);
@@ -174,7 +179,7 @@ header {
   height: 100%;
   padding-left: 7px;
   border: none;
-  background-color: white;
+  background: inherit;
 }
 
 .tab-title {
