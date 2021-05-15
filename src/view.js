@@ -71,20 +71,20 @@ class View {
     }
   }
 
-  render(name, datum) {
+  render(name, data) {
     switch (name) {
       case "Current Tabs": {
         const generateTabEntryTemplate = (tab) => {
           const title =
-            tab.title.length > 51 ? tab.title.slice(0, 50) + "..." : tab.title;
+            tab.title.length >= 40 ? tab.title.slice(0, 40) + "..." : tab.title;
           return `
           <div class="tab-entry ${tab.active ? "current" : ""}">
             <div class="entry-button-container">
               <img class="icon copy-icon" src="./assets/images/copy-icon.png" />
             </div>
-            <div class="tab-title-container">
+            <button class="tab-title-button">
               <h3 class="tab-title">${title}</h3>
-            </div>
+            </button>
             <div class="entry-button-container">
               <img class="icon delete-icon" src="./assets/images/delete-icon.png" />
             </div>
@@ -92,30 +92,28 @@ class View {
           `;
         };
 
-        const generateTabListTemplate = (window, isCurrent) => {
+        const generateTabListTemplate = (tabs, isCurrent) => {
           return `
           <div class="window">
             <div class="tabs-header">
               <div class="tabs-name-container">
-              ${isCurrent ? "Current" : "Other"} Window
+              ${isCurrent ? "Current" : "Other"} Window (${tabs.length})
               </div>
               <div class="tabs-save-button-container">
                 <button class="button save-button">☁️ Save</button>
               </div>
             </div>
             <div class="tab-list">
-              ${window.map((tab) => generateTabEntryTemplate(tab)).join("")}
+              ${tabs.map((tab) => generateTabEntryTemplate(tab)).join("")}
             </div>
           </div>
           `;
         };
 
-        let template = "";
-
-        for (const id in datum.windows) {
-          const isCurrent = id === datum.currentWindowId;
-          template += generateTabListTemplate(datum.windows[id], isCurrent);
-        }
+        const template = data.payload.windows.reduce((acc, curr) => {
+          const x = generateTabListTemplate(curr.tabs, curr.isCurrent);
+          return acc + x;
+        }, "");
 
         this.$currentTabs.innerHTML = template;
         break;
@@ -136,23 +134,23 @@ class View {
           </div>
           `;
         };
-        const generateTabEntryTemplate = (data) => {
+        const generateTabEntryTemplate = (tab) => {
+          const title =
+            tab.title.length >= 40 ? tab.title.slice(0, 40) + "..." : tab.title;
           return `
-          <div class="tab-entry ${!data ? "current" : ""}">
-            <div class="favicon-container"></div>
-            <div class="tab-title-container"></div>
-            <div class="entry-buttons-container">
-              <div class="copy-button-container">
-                <img class="icon copy-icon" src="./assets/images/copy-icon.png" />
-              </div>
-              <div class="delete-button-container">
-                <img class="icon delete-icon" src="./assets/images/delete-icon.png" />
-              </div>
+          <div class="tab-entry ${tab.active ? "current" : ""}">
+            <div class="entry-button-container">
+              <img class="icon copy-icon" src="./assets/images/copy-icon.png" />
+            </div>
+            <button class="tab-title-button">
+              <h3 class="tab-title">${title}</h3>
+            </button>
+            <div class="entry-button-container">
+              <img class="icon delete-icon" src="./assets/images/delete-icon.png" />
             </div>
           </div>
           `;
         };
-        datum = [1, 2, 3];
         const template = `
         <div class="tab-groups">
           ${datum.map((data) => generateTabGroupTemplate(data)).join("")}

@@ -167,13 +167,14 @@ header {
   background: var(--main-orange);
 }
 
-.tab-title-container {
+.tab-title-button {
   display: flex;
   align-content: center;
   width: 361px;
   height: 100%;
   padding-left: 7px;
-  padding-top: 4px;
+  border: none;
+  background-color: white;
 }
 
 .tab-title {

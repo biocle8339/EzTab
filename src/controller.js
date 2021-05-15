@@ -66,8 +66,8 @@ class Controller {
       this.view.render(tabName);
     });
 
-    const datum = await this.model.getAllWindows();
-    this.view.render("Current Tabs", datum);
+    const windows = await this.model.getAllWindows();
+    this.view.render("Current Tabs", windows);
   }
 
   _setTabState(tabName) {
