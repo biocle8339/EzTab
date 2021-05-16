@@ -12,66 +12,52 @@ module.exports = {
   },
   output: {
     path: path.join(__dirname, "dist"),
-    filename: "[name].bundle.js",
+    filename: "[name].js",
   },
+  devtool: "source-map",
   module: {
     rules: [
       {
         test: /\.css$/,
-        use: [MiniCssExtractPlugin.loader, "style-loader!css-loader"],
-        exclude: /node_modules/,
+        use: [MiniCssExtractPlugin.loader, "css-loader"],
       },
       {
-        test: /\.html$/,
-        loader: "html-loader",
-        exclude: /node_modules/,
-      },
-      {
-        test: /\.(png|jpe?g|gif|svg|ico)$/,
+        test: /\.(png|jpe?g|gif|svg|ico|svg)$/,
         use: [
           {
             loader: "url-loader",
             options: {
-              useRelativePath: true,
-              limit: 10000,
+              limit: 8192,
             },
           },
         ],
       },
     ],
   },
+  resolve: {
+    extensions: [".js"],
+  },
   plugins: [
+    new MiniCssExtractPlugin({ filename: "[name].css" }),
+    new HtmlWebpackPlugin({
+      filename: "popup.html",
+      template: "./src/popup.html",
+    }),
     new CopyWebpackPlugin({
       patterns: [
+        { from: "./src/assets/images", to: "./assets/images" },
         {
-          from: path.resolve(__dirname, "src"),
-          to: path.resolve(__dirname, "dist"),
+          from: "./src/_locales",
+          to: "./_locales",
+        },
+        {
+          from: "./src/manifest.json",
+          to: "./manifest.json",
         },
       ],
-      options: {
-        concurrency: 100,
-      },
-    }),
-    //babel도 넣을지 생각해봐야댐 지금으로썬 굳이?
-    //이거 나중에 통합할지 봐야됨
-    // new HtmlWebpackPlugin({
-    //   template: path.join(__dirname, "src", "popup.html"),
-    //   filename: "popup.html",
-    //   chunks: ["popup"],
-    // }),
-    // new HtmlWebpackPlugin({
-    //   template: path.join(__dirname, "src", "options.html"),
-    //   filename: "options.html",
-    //   chunks: ["options"],
-    // }),
-    // new HtmlWebpackPlugin({
-    //   template: path.join(__dirname, "src", "background.html"),
-    //   filename: "background.html",
-    //   chunks: ["background"],
-    // }),
-    new MiniCssExtractPlugin({
-      filename: "[name].css",
-      chunkFilename: "[id].css",
     }),
   ],
+  optimization: {
+    minimize: false,
+  },
 };

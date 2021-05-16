@@ -18,54 +18,54 @@ class View {
 
   bind(event, handler) {
     switch (event) {
-      case "moveToCurrentTabs":
-        this.$currentTabsLink.addEventListener("click", ({ target }) => {
-          this.$marker.style.width = `${target.offsetwidth}px`;
-          this.$marker.style.transform = `translateX(${
-            target.closest(".nav-link").dataset.distance
-          }px)`;
-          this.$carousel.style.left = "0px";
+      // case "moveToCurrentTabs":
+      //   this.$currentTabsLink.addEventListener("click", ({ target }) => {
+      //     this.$marker.style.width = `${target.offsetwidth}px`;
+      //     this.$marker.style.transform = `translateX(${
+      //       target.closest(".nav-link").dataset.distance
+      //     }px)`;
+      //     this.$carousel.style.left = "0px";
 
-          const tabName =
-            target.tagName !== "SPAN"
-              ? target.querySelector("span")?.textContent
-              : target.textContent;
+      //     const tabName =
+      //       target.tagName !== "SPAN"
+      //         ? target.querySelector("span")?.textContent
+      //         : target.textContent;
 
-          handler(tabName);
-        });
-        break;
-      case "moveToTabGroups":
-        this.$tabGroupsLink.addEventListener("click", ({ target }) => {
-          this.$marker.style.width = `${target.offsetwidth}px`;
-          this.$marker.style.transform = `translateX(${
-            target.closest(".nav-link").dataset.distance
-          }px)`;
-          this.$carousel.style.left = "-500px";
+      //     handler(tabName);
+      //   });
+      //   break;
+      // case "moveToTabGroups":
+      //   this.$tabGroupsLink.addEventListener("click", ({ target }) => {
+      //     this.$marker.style.width = `${target.offsetwidth}px`;
+      //     this.$marker.style.transform = `translateX(${
+      //       target.closest(".nav-link").dataset.distance
+      //     }px)`;
+      //     this.$carousel.style.left = "-500px";
 
-          const tabName =
-            target.tagName !== "SPAN"
-              ? target.querySelector("span")?.textContent
-              : target.textContent;
+      //     const tabName =
+      //       target.tagName !== "SPAN"
+      //         ? target.querySelector("span")?.textContent
+      //         : target.textContent;
 
-          handler(tabName);
-        });
-        break;
-      case "moveToTabUsage":
-        this.$tabUsageLink.addEventListener("click", ({ target }) => {
-          this.$marker.style.width = `${target.offsetwidth}px`;
-          this.$marker.style.transform = `translateX(${
-            target.closest(".nav-link").dataset.distance
-          }px)`;
-          this.$carousel.style.left = "-1000px";
+      //     handler(tabName);
+      //   });
+      //   break;
+      // case "moveToTabUsage":
+      //   this.$tabUsageLink.addEventListener("click", ({ target }) => {
+      //     this.$marker.style.width = `${target.offsetwidth}px`;
+      //     this.$marker.style.transform = `translateX(${
+      //       target.closest(".nav-link").dataset.distance
+      //     }px)`;
+      //     this.$carousel.style.left = "-1000px";
 
-          const tabName =
-            target.tagName !== "SPAN"
-              ? target.querySelector("span").textContent
-              : target.textContent;
+      //     const tabName =
+      //       target.tagName !== "SPAN"
+      //         ? target.querySelector("span").textContent
+      //         : target.textContent;
 
-          handler(tabName);
-        });
-        break;
+      //     handler(tabName);
+      //   });
+      //   break;
       default:
         throw new Error("wrong event name");
     }
@@ -74,40 +74,48 @@ class View {
   render(name, datum) {
     switch (name) {
       case "Current Tabs": {
-        const generateTabEntryTemplate = (data) => {
+        const generateTabEntryTemplate = (tab) => {
+          const title =
+            tab.title.length > 51 ? tab.title.slice(0, 50) + "..." : tab.title;
           return `
-          <div class="tab-entry ${!data ? "current" : ""}">
-            <div class="favicon-container"></div>
-            <div class="tab-title-container"></div>
-            <div class="entry-buttons-container">
-              <div class="copy-button-container">
-                <img class="icon copy-icon" src="./images/copy-icon.png" />
-              </div>
-              <div class="delete-button-container">
-                <img class="icon delete-icon" src="./images/delete-icon.png" />
-              </div>
+          <div class="tab-entry ${tab.active ? "current" : ""}">
+            <div class="entry-button-container">
+              <img class="icon copy-icon" src="./assets/images/copy-icon.png" />
+            </div>
+            <div class="tab-title-container">
+              <h3 class="tab-title">${title}</h3>
+            </div>
+            <div class="entry-button-container">
+              <img class="icon delete-icon" src="./assets/images/delete-icon.png" />
             </div>
           </div>
           `;
         };
-        //model이랑 연계되면 name-container 바꿔야됨
-        datum = [1, 2, 3];
-        const template = `
-        <div class="window">
-          <div class="tabs-header">
-            <div class="tabs-name-container">
-            Current Window
+
+        const generateTabListTemplate = (window, isCurrent) => {
+          return `
+          <div class="window">
+            <div class="tabs-header">
+              <div class="tabs-name-container">
+              ${isCurrent ? "Current" : "Other"} Window
+              </div>
+              <div class="tabs-save-button-container">
+                <button class="button save-button">☁️ Save</button>
+              </div>
             </div>
-            <div class="tabs-save-button-container">
-              <button class="button save-button">☁️ Save</button>
+            <div class="tab-list">
+              ${window.map((tab) => generateTabEntryTemplate(tab)).join("")}
             </div>
           </div>
-          <div class="tab-list">
-            ${datum.map((data) => generateTabEntryTemplate(data)).join("")}
-          </div>
-        </div>
-        `;
-        //tab-list에 multiple tab-entry 포함시키기
+          `;
+        };
+
+        let template = "";
+
+        for (const id in datum.windows) {
+          const isCurrent = id === datum.currentWindowId;
+          template += generateTabListTemplate(datum.windows[id], isCurrent);
+        }
 
         this.$currentTabs.innerHTML = template;
         break;
@@ -135,10 +143,10 @@ class View {
             <div class="tab-title-container"></div>
             <div class="entry-buttons-container">
               <div class="copy-button-container">
-                <img class="icon copy-icon" src="./images/copy-icon.png" />
+                <img class="icon copy-icon" src="./assets/images/copy-icon.png" />
               </div>
               <div class="delete-button-container">
-                <img class="icon delete-icon" src="./images/delete-icon.png" />
+                <img class="icon delete-icon" src="./assets/images/delete-icon.png" />
               </div>
             </div>
           </div>
