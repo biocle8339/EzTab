@@ -74,12 +74,21 @@ class View {
         }, "");
 
         this.$currentTabs.innerHTML = template;
-        this.$tabListSaveButtons = document.querySelectorAll(".save-button");
-        this.$tabCopyButtons = document.querySelectorAll(".tab-copy-button");
-        this.$tabDeleteButtons = document.querySelectorAll(
+        this.$tabListSaveButtons = this.$currentTabs.querySelectorAll(
+          ".tabs-save-button"
+        );
+        this.$tabListDeleteButtons = this.$currentTabs.querySelectorAll(
+          ".tabs-delete-button"
+        );
+        this.$tabCopyButtons = this.$currentTabs.querySelectorAll(
+          ".tab-copy-button"
+        );
+        this.$tabDeleteButtons = this.$currentTabs.querySelectorAll(
           ".tab-delete-button"
         );
-        this.$tabTitleButtons = document.querySelectorAll(".tab-title-button");
+        this.$tabTitleButtons = this.$currentTabs.querySelectorAll(
+          ".tab-title-button"
+        );
         break;
       }
       case "Tab Groups": {

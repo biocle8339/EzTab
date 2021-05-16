@@ -68,7 +68,7 @@ class Controller {
       $tabDeleteButton.addEventListener("click", ({ currentTarget }) => {
         const tabId = currentTarget.dataset.tabId;
         this.model.removeTab(tabId);
-        this.view.removeTab(tabId);
+        this.view.removeTab(currentTarget);
       });
     });
     this.view.$tabTitleButtons.forEach(($tabTitleButton) => {
