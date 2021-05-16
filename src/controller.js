@@ -58,6 +58,11 @@ class Controller {
 
     this.view.render("Current Tabs", windows);
 
+    this.addTabListEvent();
+    this.addTabEntryEvent();
+  }
+
+  addTabListEvent() {
     this.view.$tabListSaveButtons.forEach(($tabListSaveButton) => {
       $tabListSaveButton.addEventListener("click", async ({ target }) => {
         const tabUrls = getClosestTargetBySelector(
@@ -68,10 +73,13 @@ class Controller {
       });
     });
     this.view.$tabListDeleteButtons.forEach(($tabListDeleteButton) => {
-      console.log($tabListDeleteButton);
+      $tabListDeleteButton.addEventListener("click", ({ target }) => {
+        const windowId = Number(
+          getClosestTargetBySelector(target, ".window").dataset.windowId
+        );
+        this.model.removeWindow(windowId);
+      });
     });
-
-    this.addTabEntryEvent();
   }
 
   addTabEntryEvent() {

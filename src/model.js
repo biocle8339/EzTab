@@ -43,6 +43,10 @@ class Model {
     chrome.storage.sync.clear();
   }
 
+  async removeWindow(windowId) {
+    await chrome.windows.remove(windowId);
+  }
+
   async changeWindow(windowId) {
     await chrome.windows.update(windowId, { focused: true });
   }
