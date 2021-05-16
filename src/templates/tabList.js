@@ -7,8 +7,9 @@ const generateTabListTemplate = (tabs, isCurrent) => {
       <div class="tabs-name-container">
       ${isCurrent ? "Current" : "Other"} Window (${tabs.length})
       </div>
-      <div class="tabs-save-button-container">
-        <button class="button save-button">☁️ Save</button>
+      <div class="tabs-buttons-container">
+      <button class="tabs-button tabs-save-button">☁️ Save</button>
+        <button class="tabs-button tabs-delete-button">X Delete</button>
       </div>
     </div>
     <div class="tab-list">

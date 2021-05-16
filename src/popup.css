@@ -131,9 +131,13 @@ header {
   font-size: 20px;
 }
 
-.save-button {
+.tabs-buttons-container {
+  display: flex;
+  align-items: center;
+}
+
+.tabs-button {
   position: relative;
-  padding: 5px 8px;
   border: 3px solid #343436;
   border-radius: 5px;
   background: var(--main-indigo);
@@ -142,8 +146,17 @@ header {
   font-size: 15px;
 }
 
-.save-button:hover {
+.tabs-button:hover {
   background: #4d4d50;
+}
+
+.tabs-save-button {
+  margin-right: 5px;
+  padding: 0 8px;
+}
+
+.tabs-delete-button {
+  padding: 5px 8px;
 }
 
 .tab-list {

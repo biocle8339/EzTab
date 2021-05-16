@@ -54,7 +54,7 @@ class Controller {
     const windows = await this.model.getAllWindows();
     this.view.render("Current Tabs", windows);
     this.view.$tabListSaveButtons.forEach(($tabListSaveButton) => {
-      //save to tab group
+      console.log($tabListSaveButton);
     });
     this.view.$entryCopyButtons.forEach(($entryCopyButton) => {
       $entryCopyButton.addEventListener("click", async ({ currentTarget }) => {
