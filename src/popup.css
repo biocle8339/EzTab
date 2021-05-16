@@ -193,6 +193,7 @@ header {
   padding-left: 7px;
   border: none;
   background: inherit;
+  cursor: pointer;
 }
 
 .tab-title {
@@ -200,15 +201,20 @@ header {
   padding-top: 10px;
   font-family: var(--jua);
   font-size: 15px;
+  white-space: nowrap;
+  overflow-x: hidden;
 }
 
-.entry-button-container {
+.tab-icon-button {
   width: 30px;
   height: 30px;
   overflow: hidden;
   display: flex;
   align-items: center;
   justify-content: center;
+  border: none;
+  background: inherit;
+  cursor: pointer;
 }
 
 .icon {

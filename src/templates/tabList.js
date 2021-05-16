@@ -1,8 +1,8 @@
 import generateTabEntryTemplate from "./tabEntry";
 
-const generateTabListTemplate = (tabs, isCurrent) => {
+const generateTabListTemplate = ({ id, tabs, isCurrent }) => {
   return `
-  <div class="window">
+  <div class="window" data-window-id=${id}>
     <div class="tabs-header">
       <div class="tabs-name-container">
       ${isCurrent ? "Current" : "Other"} Window (${tabs.length})

@@ -1,3 +1,4 @@
+import getClosestTargetBySelector from "./utils/getClosestTargetBySelector.js";
 import taskQueue from "./utils/taskQueue.js";
 
 class Controller {
@@ -20,10 +21,10 @@ class Controller {
   }
 
   async init() {
+    this.model.setCurrentWindow();
     this.view.$navigation.addEventListener("click", async ({ target }) => {
-      this.view.$marker.style.transform = `translateX(${
-        target.closest(".nav-link").dataset.distance
-      }px)`;
+      const $navLink = getClosestTargetBySelector(target, ".nav-link");
+      this.view.$marker.style.transform = `translateX(${$navLink.dataset.distance}px)`;
 
       const tabName =
         target.tagName !== "SPAN"
@@ -52,20 +53,36 @@ class Controller {
     });
 
     const windows = await this.model.getAllWindows();
+
     this.view.render("Current Tabs", windows);
     this.view.$tabListSaveButtons.forEach(($tabListSaveButton) => {
       console.log($tabListSaveButton);
     });
-    this.view.$entryCopyButtons.forEach(($entryCopyButton) => {
-      $entryCopyButton.addEventListener("click", async ({ currentTarget }) => {
+
+    this.view.$tabCopyButtons.forEach(($tabCopyButton) => {
+      $tabCopyButton.addEventListener("click", async ({ currentTarget }) => {
         await navigator.clipboard.writeText(currentTarget.dataset.tabUrl);
       });
     });
-    this.view.$entryDeleteButtons.forEach(($entryDeleteButton) => {
-      $entryDeleteButton.addEventListener("click", ({ currentTarget }) => {
+    this.view.$tabDeleteButtons.forEach(($tabDeleteButton) => {
+      $tabDeleteButton.addEventListener("click", ({ currentTarget }) => {
         const tabId = currentTarget.dataset.tabId;
         this.model.removeTab(tabId);
         this.view.removeTab(tabId);
+      });
+    });
+    this.view.$tabTitleButtons.forEach(($tabTitleButton) => {
+      $tabTitleButton.addEventListener("click", async ({ currentTarget }) => {
+        const windowId = Number(
+          getClosestTargetBySelector(currentTarget, ".window").dataset.windowId
+        );
+        const tabId = Number(currentTarget.dataset.tabId);
+
+        if (this.model.getCurrentWindow().id !== windowId) {
+          this.model.changeWindow(windowId);
+        }
+
+        this.model.changeTab(tabId);
       });
     });
   }

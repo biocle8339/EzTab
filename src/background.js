@@ -1,5 +1,5 @@
 chrome.runtime.onInstalled.addListener(() => {
-  const tabs = getAllTabs();
+  console.log("now it is installed");
 });
 
 const getAllTabs = async () => {

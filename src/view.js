@@ -70,17 +70,16 @@ class View {
     switch (name) {
       case "Current Tabs": {
         const template = data.payload.windows.reduce((acc, curr) => {
-          return acc + generateTabListTemplate(curr.tabs, curr.isCurrent);
+          return acc + generateTabListTemplate(curr);
         }, "");
 
         this.$currentTabs.innerHTML = template;
         this.$tabListSaveButtons = document.querySelectorAll(".save-button");
-        this.$entryCopyButtons = document.querySelectorAll(
-          ".entry-copy-button"
+        this.$tabCopyButtons = document.querySelectorAll(".tab-copy-button");
+        this.$tabDeleteButtons = document.querySelectorAll(
+          ".tab-delete-button"
         );
-        this.$entryDeleteButtons = document.querySelectorAll(
-          ".entry-delete-button"
-        );
+        this.$tabTitleButtons = document.querySelectorAll(".tab-title-button");
         break;
       }
       case "Tab Groups": {
@@ -123,11 +122,8 @@ class View {
     }
   }
 
-  removeTab(tabId) {
-    document
-      .querySelector(`[data-tab-id="${tabId}"]`)
-      .closest(".tab-entry")
-      .remove();
+  removeTab($elem) {
+    $elem.closest(".tab-entry").remove();
   }
 }
 
