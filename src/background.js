@@ -2,6 +2,11 @@ chrome.runtime.onInstalled.addListener(() => {
   console.log("now it is installed");
 });
 
-const getAllTabs = async () => {
-  return await chrome.tabs.query({});
-};
+chrome.storage.onChanged.addListener(function (changes, namespace) {
+  for (let [key, { oldValue, newValue }] of Object.entries(changes)) {
+    console.log(
+      `Storage key "${key}" in namespace "${namespace}" changed.`,
+      `Old value was "${oldValue}", new value is "${newValue}".`
+    );
+  }
+});

@@ -92,32 +92,32 @@ class View {
         break;
       }
       case "Tab Groups": {
-        // const template = data.payload.groups.reduce((acc, curr) => {
-        //   return acc + generateTabGroupTemplate(curr.tabs, curr.groupName);
-        // }, "");
+        const template = data.payload.groups.reduce((acc, curr) => {
+          return acc + generateTabGroupTemplate(curr.tabs, curr.groupName);
+        }, "");
 
-        // this.$tabGroups.innerHTML = template;
-        // const $collapsibles = document.querySelectorAll(".collapsible");
-        // const $deletes = document.querySelectorAll(".delete");
+        this.$tabGroups.innerHTML = template;
+        const $collapsibles = document.querySelectorAll(".collapsible");
+        const $deletes = document.querySelectorAll(".delete");
 
-        // $collapsibles.forEach(($collapsible) => {
-        //   $collapsible.addEventListener("click", ({ target }) => {
-        //     target.classList.toggle("active");
-        //     const $expansion = target.parentNode.nextElementSibling;
+        $collapsibles.forEach(($collapsible) => {
+          $collapsible.addEventListener("click", ({ target }) => {
+            target.classList.toggle("active");
+            const $expansion = target.parentNode.nextElementSibling;
 
-        //     if ($expansion.style.maxHeight) {
-        //       $expansion.style.maxHeight = null;
-        //     } else {
-        //       $expansion.style.maxHeight = $expansion.scrollHeight + "px";
-        //     }
-        //   });
-        // });
+            if ($expansion.style.maxHeight) {
+              $expansion.style.maxHeight = null;
+            } else {
+              $expansion.style.maxHeight = $expansion.scrollHeight + "px";
+            }
+          });
+        });
 
-        // $deletes.forEach(($delete) => {
-        //   $delete.addEventListener("click", ({ target }) => {
-        //     target.closest(".tab-group").remove();
-        //   });
-        // });
+        $deletes.forEach(($delete) => {
+          $delete.addEventListener("click", ({ target }) => {
+            target.closest(".tab-group").remove();
+          });
+        });
 
         break;
       }

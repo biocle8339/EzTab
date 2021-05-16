@@ -39,6 +39,8 @@ class Controller {
           this.view.$carousel.style.left = "0px";
           break;
         case "Tab Groups":
+          // this.model.clearAllStorageSyncData();
+          this.model.getAllStorageSyncData();
           this.view.$carousel.style.left = "-500px";
           break;
         case "Tab Usage":
@@ -55,10 +57,24 @@ class Controller {
     const windows = await this.model.getAllWindows();
 
     this.view.render("Current Tabs", windows);
+
     this.view.$tabListSaveButtons.forEach(($tabListSaveButton) => {
-      console.log($tabListSaveButton);
+      $tabListSaveButton.addEventListener("click", async ({ target }) => {
+        const tabUrls = getClosestTargetBySelector(
+          target,
+          ".window"
+        ).dataset.tabUrls.split(",");
+        this.model.saveTabsOfWindow(tabUrls);
+      });
+    });
+    this.view.$tabListDeleteButtons.forEach(($tabListDeleteButton) => {
+      console.log($tabListDeleteButton);
     });
 
+    this.addTabEntryEvent();
+  }
+
+  addTabEntryEvent() {
     this.view.$tabCopyButtons.forEach(($tabCopyButton) => {
       $tabCopyButton.addEventListener("click", async ({ currentTarget }) => {
         await navigator.clipboard.writeText(currentTarget.dataset.tabUrl);

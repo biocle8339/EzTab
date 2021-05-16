@@ -31,8 +31,27 @@ class Model {
     return { payload: { groups } };
   }
 
+  getAllStorageSyncData() {
+    chrome.storage.sync.get(null, (data) => {
+      console.log(data);
+      this.tabGroups = data;
+    });
+    console.log(this.tabGroups);
+  }
+
+  clearAllStorageSyncData() {
+    chrome.storage.sync.clear();
+  }
+
   async changeWindow(windowId) {
     await chrome.windows.update(windowId, { focused: true });
+  }
+
+  saveTabsOfWindow(tabUrls) {
+    const key = new Date().toISOString();
+    const options = {};
+    options[key] = tabUrls;
+    chrome.storage.sync.set(options);
   }
 
   async removeTab(tabId) {
