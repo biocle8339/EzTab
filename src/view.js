@@ -1,15 +1,10 @@
+import generateTabGroupTemplate from "./templates/tabGroup";
+import generateTabListTemplate from "./templates/tabList";
+
 class View {
   constructor() {
     this.$carousel = document.querySelector(".carousel");
-    this.$currentTabsLink = document.querySelector(
-      `.nav-link[data-tab="current-tabs"]`
-    );
-    this.$tabGroupsLink = document.querySelector(
-      `.nav-link[data-tab="tab-groups"]`
-    );
-    this.$tabUsageLink = document.querySelector(
-      `.nav-link[data-tab="tab-usage"]`
-    );
+    this.$navigation = document.querySelector(".navigation");
     this.$marker = document.querySelector(".marker");
     this.$currentTabs = document.querySelector(".current-tabs");
     this.$tabGroups = document.querySelector(".tab-groups");
@@ -71,93 +66,35 @@ class View {
     }
   }
 
-  render(name, datum) {
+  render(name, data) {
     switch (name) {
       case "Current Tabs": {
-        const generateTabEntryTemplate = (tab) => {
-          const title =
-            tab.title.length > 51 ? tab.title.slice(0, 50) + "..." : tab.title;
-          return `
-          <div class="tab-entry ${tab.active ? "current" : ""}">
-            <div class="entry-button-container">
-              <img class="icon copy-icon" src="./assets/images/copy-icon.png" />
-            </div>
-            <div class="tab-title-container">
-              <h3 class="tab-title">${title}</h3>
-            </div>
-            <div class="entry-button-container">
-              <img class="icon delete-icon" src="./assets/images/delete-icon.png" />
-            </div>
-          </div>
-          `;
-        };
-
-        const generateTabListTemplate = (window, isCurrent) => {
-          return `
-          <div class="window">
-            <div class="tabs-header">
-              <div class="tabs-name-container">
-              ${isCurrent ? "Current" : "Other"} Window
-              </div>
-              <div class="tabs-save-button-container">
-                <button class="button save-button">☁️ Save</button>
-              </div>
-            </div>
-            <div class="tab-list">
-              ${window.map((tab) => generateTabEntryTemplate(tab)).join("")}
-            </div>
-          </div>
-          `;
-        };
-
-        let template = "";
-
-        for (const id in datum.windows) {
-          const isCurrent = id === datum.currentWindowId;
-          template += generateTabListTemplate(datum.windows[id], isCurrent);
-        }
+        const template = data.payload.windows.reduce((acc, curr) => {
+          return acc + generateTabListTemplate(curr);
+        }, "");
 
         this.$currentTabs.innerHTML = template;
+        this.$tabListSaveButtons = this.$currentTabs.querySelectorAll(
+          ".tabs-save-button"
+        );
+        this.$tabListDeleteButtons = this.$currentTabs.querySelectorAll(
+          ".tabs-delete-button"
+        );
+        this.$tabCopyButtons = this.$currentTabs.querySelectorAll(
+          ".tab-copy-button"
+        );
+        this.$tabDeleteButtons = this.$currentTabs.querySelectorAll(
+          ".tab-delete-button"
+        );
+        this.$tabTitleButtons = this.$currentTabs.querySelectorAll(
+          ".tab-title-button"
+        );
         break;
       }
       case "Tab Groups": {
-        const generateTabGroupTemplate = (data) => {
-          return `
-          <div class="tab-group">
-            <div class="buttons-container">
-              <button class="delete group-button">X</button>
-              <button class="collapsible group-button">Open Section ${data}</button>
-            </div>
-            <div class="expansion">
-              <div class="tab-list">
-                ${datum.map((data) => generateTabEntryTemplate(data)).join("")}
-              </div>
-            </div>
-          </div>
-          `;
-        };
-        const generateTabEntryTemplate = (data) => {
-          return `
-          <div class="tab-entry ${!data ? "current" : ""}">
-            <div class="favicon-container"></div>
-            <div class="tab-title-container"></div>
-            <div class="entry-buttons-container">
-              <div class="copy-button-container">
-                <img class="icon copy-icon" src="./assets/images/copy-icon.png" />
-              </div>
-              <div class="delete-button-container">
-                <img class="icon delete-icon" src="./assets/images/delete-icon.png" />
-              </div>
-            </div>
-          </div>
-          `;
-        };
-        datum = [1, 2, 3];
-        const template = `
-        <div class="tab-groups">
-          ${datum.map((data) => generateTabGroupTemplate(data)).join("")}
-        </div>
-        `;
+        const template = data.payload.groups.reduce((acc, curr) => {
+          return acc + generateTabGroupTemplate(curr.tabs, curr.groupName);
+        }, "");
 
         this.$tabGroups.innerHTML = template;
         const $collapsibles = document.querySelectorAll(".collapsible");
@@ -184,9 +121,18 @@ class View {
 
         break;
       }
+      case "Tab Usage": {
+        console.log("hi tab usage");
+
+        break;
+      }
       default:
         throw new Error("wrong render name");
     }
+  }
+
+  removeTab($elem) {
+    $elem.closest(".tab-entry").remove();
   }
 }
 

@@ -1,3 +1,4 @@
+import getClosestTargetBySelector from "./utils/getClosestTargetBySelector.js";
 import taskQueue from "./utils/taskQueue.js";
 
 class Controller {
@@ -20,59 +21,94 @@ class Controller {
   }
 
   async init() {
-    this.view.$currentTabsLink.addEventListener("click", ({ target }) => {
-      this.view.$marker.style.width = `${target.offsetwidth}px`;
-      this.view.$marker.style.transform = `translateX(${
-        target.closest(".nav-link").dataset.distance
-      }px)`;
-      this.view.$carousel.style.left = "0px";
+    this.model.setCurrentWindow();
+    this.view.$navigation.addEventListener("click", async ({ target }) => {
+      const $navLink = getClosestTargetBySelector(target, ".nav-link");
+      this.view.$marker.style.transform = `translateX(${$navLink.dataset.distance}px)`;
 
       const tabName =
         target.tagName !== "SPAN"
           ? target.querySelector("span").textContent
           : target.textContent;
 
-      //나중에 memoized해서 model바껴야만 바뀌도록해줘야함
-      this.view.render(tabName);
-    });
-    this.view.$tabGroupsLink.addEventListener("click", ({ target }) => {
-      this.view.$marker.style.width = `${target.offsetwidth}px`;
-      this.view.$marker.style.transform = `translateX(${
-        target.closest(".nav-link").dataset.distance
-      }px)`;
-      this.view.$carousel.style.left = "-500px";
+      let data;
 
-      const tabName =
-        target.tagName !== "SPAN"
-          ? target.querySelector("span").textContent
-          : target.textContent;
-
-      //나중에 memoized해서 model바껴야만 바뀌도록해줘야함
-      this.view.render(tabName);
-    });
-    this.view.$tabUsageLink.addEventListener("click", ({ target }) => {
-      this.view.$marker.style.width = `${target.offsetwidth}px`;
-      this.view.$marker.style.transform = `translateX(${
-        target.closest(".nav-link").dataset.distance
-      }px)`;
-      this.view.$carousel.style.left = "-1000px";
-
-      const tabName =
-        target.tagName !== "SPAN"
-          ? target.querySelector("span").textContent
-          : target.textContent;
+      switch (tabName) {
+        case "Current Tabs":
+          data = await this.model.getAllWindows();
+          this.view.$carousel.style.left = "0px";
+          break;
+        case "Tab Groups":
+          // this.model.clearAllStorageSyncData();
+          this.model.getAllStorageSyncData();
+          this.view.$carousel.style.left = "-500px";
+          break;
+        case "Tab Usage":
+          this.view.$carousel.style.left = "-1000px";
+          break;
+        default:
+          throw new Error("Invalid tab name");
+      }
 
       //나중에 memoized해서 model바껴야만 바뀌도록해줘야함
-      this.view.render(tabName);
+      this.view.render(tabName, data);
     });
 
-    const datum = await this.model.getAllWindows();
-    this.view.render("Current Tabs", datum);
+    const windows = await this.model.getAllWindows();
+
+    this.view.render("Current Tabs", windows);
+
+    this.addTabListEvent();
+    this.addTabEntryEvent();
   }
 
-  _setTabState(tabName) {
-    //차후에 모델 만들면 연계해줘야된다.
-    this.view.render(tabName);
+  addTabListEvent() {
+    this.view.$tabListSaveButtons.forEach(($tabListSaveButton) => {
+      $tabListSaveButton.addEventListener("click", async ({ target }) => {
+        const tabUrls = getClosestTargetBySelector(
+          target,
+          ".window"
+        ).dataset.tabUrls.split(",");
+        this.model.saveTabsOfWindow(tabUrls);
+      });
+    });
+    this.view.$tabListDeleteButtons.forEach(($tabListDeleteButton) => {
+      $tabListDeleteButton.addEventListener("click", ({ target }) => {
+        const windowId = Number(
+          getClosestTargetBySelector(target, ".window").dataset.windowId
+        );
+        this.model.removeWindow(windowId);
+      });
+    });
+  }
+
+  addTabEntryEvent() {
+    this.view.$tabCopyButtons.forEach(($tabCopyButton) => {
+      $tabCopyButton.addEventListener("click", async ({ currentTarget }) => {
+        await navigator.clipboard.writeText(currentTarget.dataset.tabUrl);
+      });
+    });
+    this.view.$tabDeleteButtons.forEach(($tabDeleteButton) => {
+      $tabDeleteButton.addEventListener("click", ({ currentTarget }) => {
+        const tabId = currentTarget.dataset.tabId;
+        this.model.removeTab(tabId);
+        this.view.removeTab(currentTarget);
+      });
+    });
+    this.view.$tabTitleButtons.forEach(($tabTitleButton) => {
+      $tabTitleButton.addEventListener("click", async ({ currentTarget }) => {
+        const windowId = Number(
+          getClosestTargetBySelector(currentTarget, ".window").dataset.windowId
+        );
+        const tabId = Number(currentTarget.dataset.tabId);
+
+        if (this.model.getCurrentWindow().id !== windowId) {
+          this.model.changeWindow(windowId);
+        }
+
+        this.model.changeTab(tabId);
+      });
+    });
   }
 }
 
