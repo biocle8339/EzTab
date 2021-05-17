@@ -1,43 +1,73 @@
 class Model {
   constructor() {
-    this.windows = null;
-    this.currentWindow = null;
+    this._windows = null;
+    this._currentWindow = null;
+    this._tabGroups = {};
+    // this.listeners = {};
+
+    chrome.runtime.onMessage.addListener(async (request) => {
+      switch (request.name) {
+        case "storageUpdated":
+          for (let [key, { oldValue, newValue }] of Object.entries(
+            request.payload
+          )) {
+            this._tabGroups[key] = newValue;
+          }
+          break;
+      }
+    });
   }
 
-  //나중에 background.js에서 탭이나 윈도우 상황바뀔때마다 업데이트되게 추가해줘야됨
-  //현재는 더러워도 이대로 놔두자
-  getCurrentWindow() {
-    return this.currentWindow;
+  // bind(name, callback) {
+  //   this.listeners[name] = callback;
+  // }
+
+  get windows() {
+    return this._windows;
   }
 
-  async setCurrentWindow() {
-    this.currentWindow = await chrome.windows.getCurrent({ populate: true });
+  get currentWindow() {
+    return this._currentWindow;
   }
 
-  async getAllWindows() {
-    let windows = await chrome.windows.getAll({ populate: true });
-    windows = windows.filter((window) => window.id !== this.currentWindow.id);
-    windows = [this.currentWindow].concat(windows).map((window) => ({
-      id: window.id,
-      isCurrent: this.currentWindow.id === window.id,
-      tabs: window.tabs,
-    }));
-    return { payload: { windows } };
-  }
-
-  async getAllGroups() {
+  get tabGroups() {
     const groups = [];
+
+    for (const [key, value] of Object.entries(this._tabGroups)) {
+      groups.push({ groupName: key, tabs: value });
+    }
+    console.log(groups);
 
     return { payload: { groups } };
   }
 
-  getAllStorageSyncData() {
-    chrome.storage.sync.get(null, (data) => {
-      console.log(data);
-      this.tabGroups = data;
-    });
-    console.log(this.tabGroups);
+  async setInitialState() {
+    this._currentWindow = await chrome.windows.getCurrent({ populate: true });
+    this._windows = await chrome.windows.getAll({ populate: true });
+    this._tabGroups = await this._getAllStorageSyncData();
   }
+
+  sortWindows(windows) {
+    windows = windows.filter((window) => window.id !== this._currentWindow.id);
+    windows = [this._currentWindow].concat(windows).map((window) => ({
+      id: window.id,
+      isCurrent: this._currentWindow.id === window.id,
+      tabs: window.tabs,
+    }));
+
+    return { payload: { windows } };
+  }
+
+  // async _getAllGroups() {
+  //   const groups = [];
+  //   this._tabGroups = await this._getAllStorageSyncData();
+
+  //   for (const [key, value] of Object.entries(this._tabGroups)) {
+  //     groups.push({ groupName: key, tabs: value });
+  //   }
+
+  //   return { payload: { groups } };
+  // }
 
   clearAllStorageSyncData() {
     chrome.storage.sync.clear();
@@ -51,10 +81,12 @@ class Model {
     await chrome.windows.update(windowId, { focused: true });
   }
 
-  saveTabsOfWindow(tabUrls) {
+  saveTabsOfWindow(windowId) {
     const key = new Date().toISOString();
     const options = {};
-    options[key] = tabUrls;
+    const tabs = this._windows.find((window) => window.id === Number(windowId))
+      .tabs;
+    options[key] = tabs;
     chrome.storage.sync.set(options);
   }
 
@@ -71,6 +103,18 @@ class Model {
     const temp = array[fromIndex];
     array[fromIndex] = array[toIndex];
     array[toIndex] = temp;
+  }
+
+  _getAllStorageSyncData() {
+    return new Promise((resolve, reject) => {
+      chrome.storage.sync.get(null, (items) => {
+        if (chrome.runtime.lastError) {
+          return reject(chrome.runtime.lastError);
+        }
+
+        resolve(items);
+      });
+    });
   }
 }
 

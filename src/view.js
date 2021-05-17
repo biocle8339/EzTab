@@ -11,60 +11,12 @@ class View {
     this.$tabUsage = document.querySelector(".tab-usage");
   }
 
-  bind(event, handler) {
-    switch (event) {
-      // case "moveToCurrentTabs":
-      //   this.$currentTabsLink.addEventListener("click", ({ target }) => {
-      //     this.$marker.style.width = `${target.offsetwidth}px`;
-      //     this.$marker.style.transform = `translateX(${
-      //       target.closest(".nav-link").dataset.distance
-      //     }px)`;
-      //     this.$carousel.style.left = "0px";
-
-      //     const tabName =
-      //       target.tagName !== "SPAN"
-      //         ? target.querySelector("span")?.textContent
-      //         : target.textContent;
-
-      //     handler(tabName);
-      //   });
-      //   break;
-      // case "moveToTabGroups":
-      //   this.$tabGroupsLink.addEventListener("click", ({ target }) => {
-      //     this.$marker.style.width = `${target.offsetwidth}px`;
-      //     this.$marker.style.transform = `translateX(${
-      //       target.closest(".nav-link").dataset.distance
-      //     }px)`;
-      //     this.$carousel.style.left = "-500px";
-
-      //     const tabName =
-      //       target.tagName !== "SPAN"
-      //         ? target.querySelector("span")?.textContent
-      //         : target.textContent;
-
-      //     handler(tabName);
-      //   });
-      //   break;
-      // case "moveToTabUsage":
-      //   this.$tabUsageLink.addEventListener("click", ({ target }) => {
-      //     this.$marker.style.width = `${target.offsetwidth}px`;
-      //     this.$marker.style.transform = `translateX(${
-      //       target.closest(".nav-link").dataset.distance
-      //     }px)`;
-      //     this.$carousel.style.left = "-1000px";
-
-      //     const tabName =
-      //       target.tagName !== "SPAN"
-      //         ? target.querySelector("span").textContent
-      //         : target.textContent;
-
-      //     handler(tabName);
-      //   });
-      //   break;
-      default:
-        throw new Error("wrong event name");
-    }
-  }
+  // bind(event, handler) {
+  //   switch (event) {
+  //     default:
+  //       throw new Error("wrong event name");
+  //   }
+  // }
 
   render(name, data) {
     switch (name) {
@@ -92,32 +44,18 @@ class View {
         break;
       }
       case "Tab Groups": {
+        if (data.payload.groups.length === 0) {
+          this.$tabGroups.textContent = "NO GROUP EXIST";
+          break;
+        }
+
         const template = data.payload.groups.reduce((acc, curr) => {
           return acc + generateTabGroupTemplate(curr.tabs, curr.groupName);
         }, "");
 
         this.$tabGroups.innerHTML = template;
-        const $collapsibles = document.querySelectorAll(".collapsible");
-        const $deletes = document.querySelectorAll(".delete");
-
-        $collapsibles.forEach(($collapsible) => {
-          $collapsible.addEventListener("click", ({ target }) => {
-            target.classList.toggle("active");
-            const $expansion = target.parentNode.nextElementSibling;
-
-            if ($expansion.style.maxHeight) {
-              $expansion.style.maxHeight = null;
-            } else {
-              $expansion.style.maxHeight = $expansion.scrollHeight + "px";
-            }
-          });
-        });
-
-        $deletes.forEach(($delete) => {
-          $delete.addEventListener("click", ({ target }) => {
-            target.closest(".tab-group").remove();
-          });
-        });
+        this.$collapsibles = document.querySelectorAll(".collapsible");
+        this.$deleteGroups = document.querySelectorAll(".delete-group");
 
         break;
       }
@@ -134,6 +72,10 @@ class View {
   removeTab($elem) {
     $elem.closest(".tab-entry").remove();
   }
+
+  // addTabList(window) {
+  //   this.$currentTabs.prepend();
+  // }
 }
 
 export default View;

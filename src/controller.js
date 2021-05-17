@@ -1,27 +1,13 @@
 import getClosestTargetBySelector from "./utils/getClosestTargetBySelector.js";
-import taskQueue from "./utils/taskQueue.js";
 
 class Controller {
   constructor(model, view) {
     this.model = model;
     this.view = view;
-    this.events = ["moveToCurrentTabs", "moveToTabGroups", "moveToTabUsage"];
-
-    // this.view.bind(this.events[0], (tabName) => {
-    //   this._setTabState(tabName);
-    // });
-
-    // this.view.bind(this.events[1], (tabName) => {
-    //   this._setTabState(tabName);
-    // });
-
-    // this.view.bind(this.events[2], () => {
-    //   this.startAnimation();
-    // });
   }
 
   async init() {
-    this.model.setCurrentWindow();
+    await this.model.setInitialState();
     this.view.$navigation.addEventListener("click", async ({ target }) => {
       const $navLink = getClosestTargetBySelector(target, ".nav-link");
       this.view.$marker.style.transform = `translateX(${$navLink.dataset.distance}px)`;
@@ -35,12 +21,12 @@ class Controller {
 
       switch (tabName) {
         case "Current Tabs":
-          data = await this.model.getAllWindows();
+          data = this.model.sortWindows(this.model.windows);
           this.view.$carousel.style.left = "0px";
           break;
         case "Tab Groups":
           // this.model.clearAllStorageSyncData();
-          this.model.getAllStorageSyncData();
+          data = this.model.tabGroups;
           this.view.$carousel.style.left = "-500px";
           break;
         case "Tab Usage":
@@ -52,9 +38,24 @@ class Controller {
 
       //나중에 memoized해서 model바껴야만 바뀌도록해줘야함
       this.view.render(tabName, data);
+
+      switch (tabName) {
+        case "Current Tabs":
+          this.addTabListEvent();
+          this.addTabEntryEvent();
+          break;
+        case "Tab Groups":
+          this.addTabGroupEvent();
+          this.addTabEntryEvent();
+          break;
+        case "Tab Usage":
+          break;
+        default:
+          throw new Error("Invalid tab name");
+      }
     });
 
-    const windows = await this.model.getAllWindows();
+    const windows = this.model.sortWindows(this.model.windows);
 
     this.view.render("Current Tabs", windows);
 
@@ -62,14 +63,39 @@ class Controller {
     this.addTabEntryEvent();
   }
 
+  // setCurrentTabs(data) {
+  //   this.view.render("Current Tabs", data);
+  //   this.addTabListEvent();
+  //   this.addTabEntryEvent();
+  // }
+
+  addTabGroupEvent() {
+    this.view.$collapsibles?.forEach(($collapsible) => {
+      $collapsible.addEventListener("click", ({ target }) => {
+        target.classList.toggle("active");
+        const $expansion = target.parentNode.nextElementSibling;
+
+        if ($expansion.style.maxHeight) {
+          $expansion.style.maxHeight = null;
+        } else {
+          $expansion.style.maxHeight = $expansion.scrollHeight + "px";
+        }
+      });
+    });
+
+    this.view.$deleteGroups?.forEach(($delete) => {
+      $delete.addEventListener("click", ({ target }) => {
+        target.closest(".tab-group").remove();
+      });
+    });
+  }
+
   addTabListEvent() {
     this.view.$tabListSaveButtons.forEach(($tabListSaveButton) => {
       $tabListSaveButton.addEventListener("click", async ({ target }) => {
-        const tabUrls = getClosestTargetBySelector(
-          target,
-          ".window"
-        ).dataset.tabUrls.split(",");
-        this.model.saveTabsOfWindow(tabUrls);
+        const windowId = getClosestTargetBySelector(target, ".window").dataset
+          .windowId;
+        this.model.saveTabsOfWindow(windowId);
       });
     });
     this.view.$tabListDeleteButtons.forEach(($tabListDeleteButton) => {
@@ -102,7 +128,7 @@ class Controller {
         );
         const tabId = Number(currentTarget.dataset.tabId);
 
-        if (this.model.getCurrentWindow().id !== windowId) {
+        if (this.model.currentWindow.id !== windowId) {
           this.model.changeWindow(windowId);
         }
 
