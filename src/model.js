@@ -1,69 +1,174 @@
 class Model {
   constructor() {
-    this.windows = null;
-    this.currentWindow = null;
+    this._windows = null;
+    this._currentWindow = null;
+    this._tabGroups = {};
+    // this.listeners = {};
+
+    chrome.runtime.onMessage.addListener((request) => {
+      switch (request.name) {
+        // case "initState":
+        //   this._currentWindow = request.payload.currentWindow;
+        //   this._windows = request.payload.windows;
+        //   this._tabGroups = request.payload.tabGroups;
+        //   break;
+        case "storageUpdated":
+          for (let [key, { oldValue, newValue }] of Object.entries(
+            request.payload
+          )) {
+            if (!newValue) {
+              delete this._tabGroups[key];
+              continue;
+            }
+
+            this._tabGroups[key] = newValue;
+          }
+          console.log("model storageUpdated");
+          console.dir(request.payload);
+          break;
+      }
+    });
   }
 
-  //나중에 background.js에서 탭이나 윈도우 상황바뀔때마다 업데이트되게 추가해줘야됨
-  //현재는 더러워도 이대로 놔두자
-  getCurrentWindow() {
-    return this.currentWindow;
+  // bind(name, callback) {
+  //   this.listeners[name] = callback;
+  // }
+
+  get windows() {
+    return this._windows;
   }
 
-  async setCurrentWindow() {
-    this.currentWindow = await chrome.windows.getCurrent({ populate: true });
+  get currentWindow() {
+    return this._currentWindow;
   }
 
-  async getAllWindows() {
-    let windows = await chrome.windows.getAll({ populate: true });
-    windows = windows.filter((window) => window.id !== this.currentWindow.id);
-    windows = [this.currentWindow].concat(windows).map((window) => ({
-      id: window.id,
-      isCurrent: this.currentWindow.id === window.id,
-      tabs: window.tabs,
-    }));
-    return { payload: { windows } };
-  }
-
-  async getAllGroups() {
+  get tabGroups() {
     const groups = [];
+    console.log("model tabGroups");
+    console.log(this._tabGroups);
+
+    for (const [key, value] of Object.entries(this._tabGroups)) {
+      groups.push({ groupName: key, tabs: value });
+    }
 
     return { payload: { groups } };
   }
 
-  getAllStorageSyncData() {
-    chrome.storage.sync.get(null, (data) => {
-      console.log(data);
-      this.tabGroups = data;
+  setInitialState(callback) {
+    chrome.runtime.sendMessage(
+      {
+        name: "init",
+        payload: null,
+      },
+      (res) => {
+        console.log("model init");
+        console.log(res);
+        this._currentWindow = res.payload.currentWindow;
+        this._windows = res.payload.windows;
+        this._tabGroups = res.payload.tabGroups;
+
+        callback(this.sortWindows(this._windows));
+      }
+    );
+  }
+
+  sortWindows(windows) {
+    if (!windows) {
+      return null;
+    }
+
+    windows = windows.filter((window) => window.id !== this._currentWindow.id);
+    windows = [this._currentWindow].concat(windows).map((window) => ({
+      id: window.id,
+      isCurrent: this._currentWindow.id === window.id,
+      tabs: window.tabs,
+    }));
+
+    return { payload: { windows } };
+  }
+
+  removeWindow(windowId) {
+    chrome.runtime.sendMessage({
+      name: "removeWindow",
+      payload: { windowId },
     });
-    console.log(this.tabGroups);
+  }
+
+  changeWindow(windowId) {
+    chrome.runtime.sendMessage({
+      name: "changeWindow",
+      payload: { windowId },
+    });
+  }
+
+  removeTab(tabId) {
+    chrome.runtime.sendMessage({
+      name: "removeTab",
+      payload: { tabId },
+    });
+  }
+
+  changeTab(tabId) {
+    chrome.runtime.sendMessage({
+      name: "changeTab",
+      payload: { tabId },
+    });
   }
 
   clearAllStorageSyncData() {
-    chrome.storage.sync.clear();
+    chrome.runtime.sendMessage({
+      name: "clearGroups",
+      payload: null,
+    });
   }
 
-  async removeWindow(windowId) {
-    await chrome.windows.remove(windowId);
-  }
-
-  async changeWindow(windowId) {
-    await chrome.windows.update(windowId, { focused: true });
-  }
-
-  saveTabsOfWindow(tabUrls) {
+  saveTabsOfWindow(windowId) {
     const key = new Date().toISOString();
     const options = {};
-    options[key] = tabUrls;
-    chrome.storage.sync.set(options);
+    const tabs = this._windows
+      .find((window) => window.id === windowId)
+      .tabs.map((tab) => ({ title: tab.title, url: tab.url }));
+    options[key] = tabs;
+    chrome.runtime.sendMessage({
+      name: "saveGroup",
+      payload: options,
+    });
   }
 
-  async removeTab(tabId) {
-    await chrome.tabs.remove(Number(tabId));
+  removeGroup(groupName) {
+    chrome.runtime.sendMessage({
+      name: "removeGroup",
+      payload: { groupName },
+    });
   }
 
-  async changeTab(tabId) {
-    await chrome.tabs.update(tabId, { active: true });
+  openGroup(groupName) {
+    const url = this._tabGroups[groupName].map((tabGroup) => tabGroup.url);
+    chrome.runtime.sendMessage({
+      name: "openGroup",
+      payload: { url },
+    });
+  }
+
+  changeGroupTitle(prevName, newName) {
+    chrome.runtime.sendMessage({
+      name: "changeGroupName",
+      payload: { prevName, newName },
+    });
+  }
+
+  removeGroupTab(groupName, tabUrl) {
+    chrome.runtime.sendMessage({
+      name: "removeGroupTab",
+      payload: { groupName, tabUrl },
+    });
+  }
+
+  openTab(url) {
+    chrome.runtime.sendMessage({
+      name: "openTab",
+      payload: { url },
+    });
   }
 
   //이건 아예 유틸로 빼도될거같은데
