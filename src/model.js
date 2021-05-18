@@ -23,7 +23,7 @@ class Model {
 
             this._tabGroups[key] = newValue;
           }
-          console.log("model");
+          console.log("model storageUpdated");
           console.dir(request.payload);
           break;
       }
@@ -87,13 +87,6 @@ class Model {
     return { payload: { windows } };
   }
 
-  clearAllStorageSyncData() {
-    chrome.runtime.sendMessage({
-      name: "clearGroups",
-      payload: null,
-    });
-  }
-
   removeWindow(windowId) {
     chrome.runtime.sendMessage({
       name: "removeWindow",
@@ -108,26 +101,6 @@ class Model {
     });
   }
 
-  saveTabsOfWindow(windowId) {
-    const key = new Date().toISOString();
-    const options = {};
-    const tabs = this._windows
-      .find((window) => window.id === Number(windowId))
-      .tabs.map((tab) => ({ title: tab.title, url: tab.url }));
-    options[key] = tabs;
-    chrome.runtime.sendMessage({
-      name: "saveGroup",
-      payload: options,
-    });
-  }
-
-  changeGroupTitle(prevName, newName) {
-    chrome.runtime.sendMessage({
-      name: "changeGroupName",
-      payload: { prevName, newName },
-    });
-  }
-
   removeTab(tabId) {
     chrome.runtime.sendMessage({
       name: "removeTab",
@@ -139,6 +112,62 @@ class Model {
     chrome.runtime.sendMessage({
       name: "changeTab",
       payload: { tabId },
+    });
+  }
+
+  clearAllStorageSyncData() {
+    chrome.runtime.sendMessage({
+      name: "clearGroups",
+      payload: null,
+    });
+  }
+
+  saveTabsOfWindow(windowId) {
+    const key = new Date().toISOString();
+    const options = {};
+    const tabs = this._windows
+      .find((window) => window.id === windowId)
+      .tabs.map((tab) => ({ title: tab.title, url: tab.url }));
+    options[key] = tabs;
+    chrome.runtime.sendMessage({
+      name: "saveGroup",
+      payload: options,
+    });
+  }
+
+  removeGroup(groupName) {
+    chrome.runtime.sendMessage({
+      name: "removeGroup",
+      payload: { groupName },
+    });
+  }
+
+  openGroup(groupName) {
+    const url = this._tabGroups[groupName].map((tabGroup) => tabGroup.url);
+    chrome.runtime.sendMessage({
+      name: "openGroup",
+      payload: { url },
+    });
+  }
+
+  changeGroupTitle(prevName, newName) {
+    chrome.runtime.sendMessage({
+      name: "changeGroupName",
+      payload: { prevName, newName },
+    });
+  }
+
+  removeGroupTab(groupName, tabUrl) {
+    chrome.runtime.sendMessage({
+      name: "removeGroupTab",
+      payload: { groupName, tabUrl },
+    });
+  }
+
+  openTab(url) {
+    chrome.runtime.sendMessage({
+      name: "openTab",
+      payload: { url },
     });
   }
 

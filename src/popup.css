@@ -179,7 +179,7 @@ main {
   padding: 0 8px;
 }
 
-.tabs-delete-button {
+.tabs-close-button {
   padding: 5px 8px;
 }
 
@@ -260,12 +260,13 @@ main {
 
 /*tabGroups용 버튼 차후 수정예정 */
 .group-button {
-  padding: 18px;
+  padding: 8px 18px;
   border: none;
   outline: none;
   text-align: center;
   font-size: 15px;
   cursor: pointer;
+  background-color: #f1c47b;
 }
 
 .group-title-form {
@@ -283,12 +284,6 @@ main {
   background-color: #777;
   color: var(--main-white);
   font-size: 20px;
-}
-
-.group-button {
-  width: 21px;
-  background-color: #f1c47b;
-  color: var(--main-white);
 }
 
 .group-button:hover {

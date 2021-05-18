@@ -7,8 +7,8 @@ const generateTabEntryTemplate = (tab) => {
     <button class="tab-icon-button tab-copy-button" data-tab-url=${tab.url}>
       <img class="icon copy-icon" src="./assets/images/copy-icon.png" />
     </button>
-    <button class="tab-icon-button tab-delete-button" data-tab-id=${tab.id}>
-      <img class="icon delete-icon" src="./assets/images/delete-icon.png" />
+    <button class="tab-icon-button tab-close-button" data-tab-id=${tab.id}>
+      <img class="icon close-icon" src="./assets/images/close-icon.png" />
     </button>
   </div>
   `;

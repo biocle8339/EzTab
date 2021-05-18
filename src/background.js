@@ -21,24 +21,33 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     case "removeWindow":
       chrome.windows.remove(request.payload.windowId);
       break;
-    case "saveGroups":
+    case "saveGroup":
       chrome.storage.sync.set(request.payload);
+      break;
+    case "removeGroup":
+      chrome.storage.sync.remove(request.payload.groupName);
+      break;
+    case "openGroup":
+      console.log(request.payload);
+      chrome.windows.create({ url: request.payload.url });
       break;
     case "clearGroups":
       chrome.storage.sync.clear();
       break;
     case "changeGroupName": {
-      // const { prevName, newName } = request.payload;
-      // const options = {};
-      // const data = await getStorageSyncData(prevName);
-      // console.log("changeGroupName");
-      // console.log(data);
-      // options[newName] = data[prevName];
-      // chrome.storage.sync.remove(prevName);
-      // chrome.storage.sync.set(options);
-      changeGroupName();
+      const { prevName, newName } = request.payload;
+      changeGroupName(prevName, newName);
       break;
     }
+    case "removeGroupTab": {
+      const { groupName, tabUrl } = request.payload;
+      removeGroupTab(groupName, tabUrl);
+      break;
+    }
+    case "openTab":
+      console.log(request.payload);
+      chrome.windows.create({ url: request.payload.url });
+      break;
   }
 
   console.log("hi");
@@ -48,12 +57,10 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 chrome.storage.onChanged.addListener(function (changes, namespace) {
   console.log("background storage onChanged");
   console.dir(changes);
-  //for (let [key, { oldValue, newValue }] of Object.entries(changes)) {
   chrome.runtime.sendMessage({
     name: "storageUpdated",
     payload: changes,
   });
-  //}
 });
 
 const getInitialState = async () => {
@@ -73,10 +80,25 @@ const getInitialState = async () => {
   };
 };
 
+const removeGroupTab = async (groupName, tabUrl) => {
+  const options = {};
+  const data = await getStorageSyncData(groupName);
+  console.log("background removeGroupTab");
+  console.log(data);
+  options[groupName] = data[groupName].filter((el) => el.url !== tabUrl);
+  chrome.storage.sync.remove(groupName);
+
+  if (options[groupName].length === 0) {
+    return;
+  }
+
+  chrome.storage.sync.set(options);
+};
+
 const changeGroupName = async (prevName, newName) => {
   const options = {};
   const data = await getStorageSyncData(prevName);
-  console.log("changeGroupName");
+  console.log("background changeGroupName");
   console.log(data);
   options[newName] = data[prevName];
   chrome.storage.sync.remove(prevName);

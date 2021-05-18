@@ -9,7 +9,7 @@ const generateTabListTemplate = ({ id, tabs, isCurrent }) => {
       </div>
       <div class="tabs-buttons-container">
         <button class="tabs-button tabs-save-button">☁️ Save</button>
-        <button class="tabs-button tabs-delete-button">X Delete</button>
+        <button class="tabs-button tabs-close-button">X Close</button>
       </div>
     </div>
     <div class="tab-list">

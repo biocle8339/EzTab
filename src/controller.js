@@ -47,7 +47,7 @@ class Controller {
           break;
         case "Tab Groups":
           this.addTabGroupEvent();
-          this.addTabEntryEvent();
+          this.addTabGroupEntryEvent();
           break;
         case "Tab Usage":
           break;
@@ -56,16 +56,16 @@ class Controller {
       }
     });
 
-    const windows = this.model.sortWindows(this.model.windows);
+    // const windows = this.model.sortWindows(this.model.windows);
 
-    if (!windows) {
-      return;
-    }
+    // if (!windows) {
+    //   return;
+    // }
 
-    this.view.render("Current Tabs", windows);
+    // this.view.render("Current Tabs", windows);
 
-    this.addTabListEvent();
-    this.addTabEntryEvent();
+    // this.addTabListEvent();
+    // this.addTabEntryEvent();
   }
 
   renderInitialView(data) {
@@ -81,18 +81,46 @@ class Controller {
         this.view.changeGroupTitle(event.target, this.model.changeGroupTitle);
       });
     });
-    this.view.$collapsibles?.forEach(($collapsible) => {
-      $collapsible.addEventListener("click", ({ target }) => {
-        this.view.expandGroup(target);
+    this.view.$groupCollapsibleButtons?.forEach(($groupCollapsibleButton) => {
+      $groupCollapsibleButton.addEventListener("click", ({ currentTarget }) => {
+        this.view.expandGroup(currentTarget);
       });
     });
-
-    this.view.$deleteGroups?.forEach(($delete) => {
+    this.view.$groupDeleteButtons?.forEach(($groupDeleteButton) => {
       // this.model.clearAllStorageSyncData();
-      $delete.addEventListener("click", ({ target }) => {
+      $groupDeleteButton.addEventListener("click", ({ currentTarget }) => {
         console.log("controller deleteGroup button event");
-        console.log(target);
-        target.closest(".tab-group").remove();
+        this.view.removeGroup(currentTarget, this.model.removeGroup);
+      });
+    });
+    this.view.$groupOpenButtons?.forEach(($groupOpenButton) => {
+      $groupOpenButton.addEventListener("click", ({ currentTarget }) => {
+        console.log("controller openGroup button event");
+        this.view.openGroup(
+          currentTarget,
+          this.model.openGroup.bind(this.model)
+        );
+      });
+    });
+  }
+
+  addTabGroupEntryEvent() {
+    this.view.$groupTabCopyButtons.forEach(($groupTabCopyButton) => {
+      $groupTabCopyButton.addEventListener(
+        "click",
+        async ({ currentTarget }) => {
+          await navigator.clipboard.writeText(currentTarget.dataset.tabUrl);
+        }
+      );
+    });
+    this.view.$groupTabDeleteButtons.forEach(($groupTabDeleteButton) => {
+      $groupTabDeleteButton.addEventListener("click", ({ currentTarget }) => {
+        this.view.removeGroupTab(currentTarget, this.model.removeGroupTab);
+      });
+    });
+    this.view.$groupTabTitleButtons.forEach(($groupTabTitleButton) => {
+      $groupTabTitleButton.addEventListener("click", ({ currentTarget }) => {
+        this.view.openTab(currentTarget, this.model.openTab);
       });
     });
   }
@@ -101,18 +129,15 @@ class Controller {
     this.view.$currentTabListSaveButtons.forEach(
       ($currentTabListSaveButton) => {
         $currentTabListSaveButton.addEventListener("click", ({ target }) => {
-          const windowId = getClosestTargetBySelector(target, ".window").dataset
-            .windowId;
+          const windowId = this.view.getWindowId(target);
           this.model.saveTabsOfWindow(windowId);
         });
       }
     );
-    this.view.$currentTabListDeleteButtons.forEach(
-      ($currentTabListDeleteButton) => {
-        $currentTabListDeleteButton.addEventListener("click", ({ target }) => {
-          const windowId = Number(
-            getClosestTargetBySelector(target, ".window").dataset.windowId
-          );
+    this.view.$currentTabListCloseButtons.forEach(
+      ($currentTabListCloseButton) => {
+        $currentTabListCloseButton.addEventListener("click", ({ target }) => {
+          const windowId = this.view.getWindowId(target);
           this.model.removeWindow(windowId);
         });
       }
@@ -128,18 +153,14 @@ class Controller {
         }
       );
     });
-    this.view.$currentTabDeleteButtons.forEach(($currentTabDeleteButton) => {
-      $currentTabDeleteButton.addEventListener("click", ({ currentTarget }) => {
-        const tabId = currentTarget.dataset.tabId;
-        this.model.removeTab(tabId);
-        this.view.removeTab(currentTarget);
+    this.view.$currentTabCloseButtons.forEach(($currentTabCloseButton) => {
+      $currentTabCloseButton.addEventListener("click", ({ currentTarget }) => {
+        this.view.removeTab(currentTarget, this.model.removeTab);
       });
     });
     this.view.$currentTabTitleButtons.forEach(($currentTabTitleButton) => {
       $currentTabTitleButton.addEventListener("click", ({ currentTarget }) => {
-        const windowId = Number(
-          getClosestTargetBySelector(currentTarget, ".window").dataset.windowId
-        );
+        const windowId = this.view.getWindowId(currentTarget);
         const tabId = Number(currentTarget.dataset.tabId);
 
         if (this.model.currentWindow.id !== windowId) {

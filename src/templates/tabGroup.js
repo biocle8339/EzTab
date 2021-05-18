@@ -2,13 +2,20 @@ import generateGroupTabEntryTemplate from "./groupTabEntry";
 
 const generateTabGroupTemplate = (tabs, groupName) => {
   return `
-  <div class="tab-group">
+  <div class="tab-group" data-group-name=${groupName}>
     <div class="group-header">
-      <form class="group-title-form" data-group-name=${groupName}>
+      <button class="collapsible group-button">
+        <img class="icon expand-icon" src="./assets/images/expand-icon.png" />
+      </button>
+      <form class="group-title-form">
         <input class="group-title" type="text" value="${groupName}">
       </form>
-      <button class="collapsible group-button">+</button>
-      <button class="delete-group group-button">X</button>
+      <button class="open-group group-button">
+        <img class="icon open-group-icon" src="./assets/images/open-group-icon.png" />
+      </button>
+      <button class="delete-group group-button">
+        <img class="icon delete-icon" src="./assets/images/delete-icon.png" />
+      </button>
     </div>
     <div class="expansion">
       <div class="tab-list">

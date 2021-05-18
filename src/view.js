@@ -1,5 +1,6 @@
 import generateTabGroupTemplate from "./templates/tabGroup";
 import generateTabListTemplate from "./templates/tabList";
+import getClosestTargetBySelector from "./utils/getClosestTargetBySelector";
 
 class View {
   constructor() {
@@ -29,14 +30,14 @@ class View {
         this.$currentTabListSaveButtons = this.$currentTabs.querySelectorAll(
           ".tabs-save-button"
         );
-        this.$currentTabListDeleteButtons = this.$currentTabs.querySelectorAll(
-          ".tabs-delete-button"
+        this.$currentTabListCloseButtons = this.$currentTabs.querySelectorAll(
+          ".tabs-close-button"
         );
         this.$currentTabCopyButtons = this.$currentTabs.querySelectorAll(
           ".tab-copy-button"
         );
-        this.$currentTabDeleteButtons = this.$currentTabs.querySelectorAll(
-          ".tab-delete-button"
+        this.$currentTabCloseButtons = this.$currentTabs.querySelectorAll(
+          ".tab-close-button"
         );
         this.$currentTabTitleButtons = this.$currentTabs.querySelectorAll(
           ".tab-title-button"
@@ -54,9 +55,27 @@ class View {
         }, "");
 
         this.$tabGroups.innerHTML = template;
-        this.$groupTitleForms = document.querySelectorAll(".group-title-form");
-        this.$collapsibles = document.querySelectorAll(".collapsible");
-        this.$deleteGroups = document.querySelectorAll(".delete-group");
+        this.$groupTitleForms = this.$tabGroups.querySelectorAll(
+          ".group-title-form"
+        );
+        this.$groupCollapsibleButtons = this.$tabGroups.querySelectorAll(
+          ".collapsible"
+        );
+        this.$groupDeleteButtons = this.$tabGroups.querySelectorAll(
+          ".delete-group"
+        );
+        this.$groupOpenButtons = this.$tabGroups.querySelectorAll(
+          ".open-group"
+        );
+        this.$groupTabCopyButtons = this.$tabGroups.querySelectorAll(
+          ".tab-copy-button"
+        );
+        this.$groupTabDeleteButtons = this.$tabGroups.querySelectorAll(
+          ".tab-delete-button"
+        );
+        this.$groupTabTitleButtons = this.$tabGroups.querySelectorAll(
+          ".tab-title-button"
+        );
 
         break;
       }
@@ -70,14 +89,42 @@ class View {
     }
   }
 
-  removeTab($elem) {
-    $elem.closest(".tab-entry").remove();
+  getWindowId($elem) {
+    return Number(
+      getClosestTargetBySelector($elem, ".window").dataset.windowId
+    );
+  }
+
+  removeTab($elem, callback) {
+    const tabId = $elem.dataset.tabId;
+    getClosestTargetBySelector($elem, ".tab-entry").remove();
+    callback(tabId);
+  }
+
+  removeGroupTab($elem, callback) {
+    const $tabList = getClosestTargetBySelector($elem, ".tab-list").children;
+    const $tabGroup = getClosestTargetBySelector($elem, ".tab-group");
+    const tabUrl = $elem.previousElementSibling.dataset.tabUrl;
+    const groupName = $tabGroup.dataset.groupName;
+    getClosestTargetBySelector($elem, ".tab-entry").remove();
+
+    if ($tabList.length === 0) {
+      $tabGroup.remove();
+    }
+
+    callback(groupName, tabUrl);
+  }
+
+  openTab($elem, callback) {
+    const tabUrl = $elem.nextElementSibling.dataset.tabUrl;
+    callback(tabUrl);
   }
 
   changeGroupTitle($elem, callback) {
-    const prevName = $elem.dataset.groupName;
+    const $tabGroup = getClosestTargetBySelector($elem, ".tab-group");
+    const prevName = $tabGroup.dataset.groupName;
     const newName = $elem.querySelector(".group-title").value;
-    $elem.dataset.groupName = newName;
+    $tabGroup.dataset.groupName = newName;
     callback(prevName, newName);
   }
 
@@ -90,6 +137,21 @@ class View {
     } else {
       $expansion.style.maxHeight = $expansion.scrollHeight + "px";
     }
+  }
+
+  removeGroup($elem, callback) {
+    const $tabGroup = getClosestTargetBySelector($elem, ".tab-group");
+    const groupName = $tabGroup.dataset.groupName;
+    console.log(groupName);
+    $tabGroup.remove();
+    callback(groupName);
+  }
+
+  openGroup($elem, callback) {
+    const $tabGroup = getClosestTargetBySelector($elem, ".tab-group");
+    const groupName = $tabGroup.dataset.groupName;
+    console.log(groupName);
+    callback(groupName);
   }
 }
 
