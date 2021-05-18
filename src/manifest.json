@@ -31,11 +31,8 @@
     }
   },
   "permissions": [
-    "history",
     "tabs",
-    "contextMenus",
     "storage",
-    "notifications",
-    "search"
+    "notifications"
   ]
 }

@@ -5,14 +5,26 @@ class Model {
     this._tabGroups = {};
     // this.listeners = {};
 
-    chrome.runtime.onMessage.addListener(async (request) => {
+    chrome.runtime.onMessage.addListener((request) => {
       switch (request.name) {
+        // case "initState":
+        //   this._currentWindow = request.payload.currentWindow;
+        //   this._windows = request.payload.windows;
+        //   this._tabGroups = request.payload.tabGroups;
+        //   break;
         case "storageUpdated":
           for (let [key, { oldValue, newValue }] of Object.entries(
             request.payload
           )) {
+            if (!newValue) {
+              delete this._tabGroups[key];
+              continue;
+            }
+
             this._tabGroups[key] = newValue;
           }
+          console.log("model");
+          console.dir(request.payload);
           break;
       }
     });
@@ -32,22 +44,39 @@ class Model {
 
   get tabGroups() {
     const groups = [];
+    console.log("model tabGroups");
+    console.log(this._tabGroups);
 
     for (const [key, value] of Object.entries(this._tabGroups)) {
       groups.push({ groupName: key, tabs: value });
     }
-    console.log(groups);
 
     return { payload: { groups } };
   }
 
-  async setInitialState() {
-    this._currentWindow = await chrome.windows.getCurrent({ populate: true });
-    this._windows = await chrome.windows.getAll({ populate: true });
-    this._tabGroups = await this._getAllStorageSyncData();
+  setInitialState(callback) {
+    chrome.runtime.sendMessage(
+      {
+        name: "init",
+        payload: null,
+      },
+      (res) => {
+        console.log("model init");
+        console.log(res);
+        this._currentWindow = res.payload.currentWindow;
+        this._windows = res.payload.windows;
+        this._tabGroups = res.payload.tabGroups;
+
+        callback(this.sortWindows(this._windows));
+      }
+    );
   }
 
   sortWindows(windows) {
+    if (!windows) {
+      return null;
+    }
+
     windows = windows.filter((window) => window.id !== this._currentWindow.id);
     windows = [this._currentWindow].concat(windows).map((window) => ({
       id: window.id,
@@ -58,44 +87,59 @@ class Model {
     return { payload: { windows } };
   }
 
-  // async _getAllGroups() {
-  //   const groups = [];
-  //   this._tabGroups = await this._getAllStorageSyncData();
-
-  //   for (const [key, value] of Object.entries(this._tabGroups)) {
-  //     groups.push({ groupName: key, tabs: value });
-  //   }
-
-  //   return { payload: { groups } };
-  // }
-
   clearAllStorageSyncData() {
-    chrome.storage.sync.clear();
+    chrome.runtime.sendMessage({
+      name: "clearGroups",
+      payload: null,
+    });
   }
 
-  async removeWindow(windowId) {
-    await chrome.windows.remove(windowId);
+  removeWindow(windowId) {
+    chrome.runtime.sendMessage({
+      name: "removeWindow",
+      payload: { windowId },
+    });
   }
 
-  async changeWindow(windowId) {
-    await chrome.windows.update(windowId, { focused: true });
+  changeWindow(windowId) {
+    chrome.runtime.sendMessage({
+      name: "changeWindow",
+      payload: { windowId },
+    });
   }
 
   saveTabsOfWindow(windowId) {
     const key = new Date().toISOString();
     const options = {};
-    const tabs = this._windows.find((window) => window.id === Number(windowId))
-      .tabs;
+    const tabs = this._windows
+      .find((window) => window.id === Number(windowId))
+      .tabs.map((tab) => ({ title: tab.title, url: tab.url }));
     options[key] = tabs;
-    chrome.storage.sync.set(options);
+    chrome.runtime.sendMessage({
+      name: "saveGroup",
+      payload: options,
+    });
   }
 
-  async removeTab(tabId) {
-    await chrome.tabs.remove(Number(tabId));
+  changeGroupTitle(prevName, newName) {
+    chrome.runtime.sendMessage({
+      name: "changeGroupName",
+      payload: { prevName, newName },
+    });
   }
 
-  async changeTab(tabId) {
-    await chrome.tabs.update(tabId, { active: true });
+  removeTab(tabId) {
+    chrome.runtime.sendMessage({
+      name: "removeTab",
+      payload: { tabId },
+    });
+  }
+
+  changeTab(tabId) {
+    chrome.runtime.sendMessage({
+      name: "changeTab",
+      payload: { tabId },
+    });
   }
 
   //이건 아예 유틸로 빼도될거같은데
@@ -103,18 +147,6 @@ class Model {
     const temp = array[fromIndex];
     array[fromIndex] = array[toIndex];
     array[toIndex] = temp;
-  }
-
-  _getAllStorageSyncData() {
-    return new Promise((resolve, reject) => {
-      chrome.storage.sync.get(null, (items) => {
-        if (chrome.runtime.lastError) {
-          return reject(chrome.runtime.lastError);
-        }
-
-        resolve(items);
-      });
-    });
   }
 }
 

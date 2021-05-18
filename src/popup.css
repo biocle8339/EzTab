@@ -252,9 +252,10 @@ main {
   margin-top: 10px;
 } */
 
-.buttons-container {
+.group-header {
   display: flex;
   margin-top: 20px;
+  width: 469px;
 }
 
 /*tabGroups용 버튼 차후 수정예정 */
@@ -267,37 +268,35 @@ main {
   cursor: pointer;
 }
 
-.delete-group {
-  width: 15%;
-  background-color: #f1c47b;
-  color: var(--main-white);
-}
-
-.collapsible {
-  width: 85%;
+.group-title-form {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 427px;
   background-color: #777;
   color: var(--main-white);
 }
 
-.delete-group:hover {
+.group-title {
+  height: 40px;
+  border: none;
+  background-color: #777;
+  color: var(--main-white);
+  font-size: 20px;
+}
+
+.group-button {
+  width: 21px;
+  background-color: #f1c47b;
+  color: var(--main-white);
+}
+
+.group-button:hover {
   background-color: var(--main-orange);
 }
 
-.active,
-.collapsible:hover {
-  background-color: #555;
-}
-
-.collapsible:after {
-  float: right;
-  margin-left: 5px;
-  content: "\002B";
-  color: var(--main-white);
-  font-weight: bold;
-}
-
-.active:after {
-  content: "\2212";
+.active {
+  background-color: var(--main-orange);
 }
 
 .expansion {

@@ -1,6 +1,6 @@
 const generateGroupTabEntryTemplate = (tab) => {
   return `
-  <div class="tab-entry>
+  <div class="tab-entry">
     <button class="tab-title-button">
       <h3 class="tab-title">${tab.title}</h3>
     </button>

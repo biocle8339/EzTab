@@ -26,19 +26,19 @@ class View {
         }, "");
 
         this.$currentTabs.innerHTML = template;
-        this.$tabListSaveButtons = this.$currentTabs.querySelectorAll(
+        this.$currentTabListSaveButtons = this.$currentTabs.querySelectorAll(
           ".tabs-save-button"
         );
-        this.$tabListDeleteButtons = this.$currentTabs.querySelectorAll(
+        this.$currentTabListDeleteButtons = this.$currentTabs.querySelectorAll(
           ".tabs-delete-button"
         );
-        this.$tabCopyButtons = this.$currentTabs.querySelectorAll(
+        this.$currentTabCopyButtons = this.$currentTabs.querySelectorAll(
           ".tab-copy-button"
         );
-        this.$tabDeleteButtons = this.$currentTabs.querySelectorAll(
+        this.$currentTabDeleteButtons = this.$currentTabs.querySelectorAll(
           ".tab-delete-button"
         );
-        this.$tabTitleButtons = this.$currentTabs.querySelectorAll(
+        this.$currentTabTitleButtons = this.$currentTabs.querySelectorAll(
           ".tab-title-button"
         );
         break;
@@ -54,6 +54,7 @@ class View {
         }, "");
 
         this.$tabGroups.innerHTML = template;
+        this.$groupTitleForms = document.querySelectorAll(".group-title-form");
         this.$collapsibles = document.querySelectorAll(".collapsible");
         this.$deleteGroups = document.querySelectorAll(".delete-group");
 
@@ -73,9 +74,23 @@ class View {
     $elem.closest(".tab-entry").remove();
   }
 
-  // addTabList(window) {
-  //   this.$currentTabs.prepend();
-  // }
+  changeGroupTitle($elem, callback) {
+    const prevName = $elem.dataset.groupName;
+    const newName = $elem.querySelector(".group-title").value;
+    $elem.dataset.groupName = newName;
+    callback(prevName, newName);
+  }
+
+  expandGroup($elem) {
+    $elem.classList.toggle("active");
+    const $expansion = $elem.parentNode.nextElementSibling;
+
+    if ($expansion.style.maxHeight) {
+      $expansion.style.maxHeight = null;
+    } else {
+      $expansion.style.maxHeight = $expansion.scrollHeight + "px";
+    }
+  }
 }
 
 export default View;

@@ -6,9 +6,9 @@ class Controller {
     this.view = view;
   }
 
-  async init() {
-    await this.model.setInitialState();
-    this.view.$navigation.addEventListener("click", async ({ target }) => {
+  init() {
+    this.model.setInitialState(this.renderInitialView.bind(this));
+    this.view.$navigation.addEventListener("click", ({ target }) => {
       const $navLink = getClosestTargetBySelector(target, ".nav-link");
       this.view.$marker.style.transform = `translateX(${$navLink.dataset.distance}px)`;
 
@@ -25,7 +25,8 @@ class Controller {
           this.view.$carousel.style.left = "0px";
           break;
         case "Tab Groups":
-          // this.model.clearAllStorageSyncData();
+          console.log("controller - tabGroup nav");
+          console.log(this.model._tabGroups);
           data = this.model.tabGroups;
           this.view.$carousel.style.left = "-500px";
           break;
@@ -57,72 +58,85 @@ class Controller {
 
     const windows = this.model.sortWindows(this.model.windows);
 
+    if (!windows) {
+      return;
+    }
+
     this.view.render("Current Tabs", windows);
 
     this.addTabListEvent();
     this.addTabEntryEvent();
   }
 
-  // setCurrentTabs(data) {
-  //   this.view.render("Current Tabs", data);
-  //   this.addTabListEvent();
-  //   this.addTabEntryEvent();
-  // }
+  renderInitialView(data) {
+    this.view.render("Current Tabs", data);
+    this.addTabListEvent();
+    this.addTabEntryEvent();
+  }
 
   addTabGroupEvent() {
+    this.view.$groupTitleForms?.forEach(($groupTitleForm) => {
+      $groupTitleForm.addEventListener("submit", (event) => {
+        event.preventDefault();
+        this.view.changeGroupTitle(event.target, this.model.changeGroupTitle);
+      });
+    });
     this.view.$collapsibles?.forEach(($collapsible) => {
       $collapsible.addEventListener("click", ({ target }) => {
-        target.classList.toggle("active");
-        const $expansion = target.parentNode.nextElementSibling;
-
-        if ($expansion.style.maxHeight) {
-          $expansion.style.maxHeight = null;
-        } else {
-          $expansion.style.maxHeight = $expansion.scrollHeight + "px";
-        }
+        this.view.expandGroup(target);
       });
     });
 
     this.view.$deleteGroups?.forEach(($delete) => {
+      // this.model.clearAllStorageSyncData();
       $delete.addEventListener("click", ({ target }) => {
+        console.log("controller deleteGroup button event");
+        console.log(target);
         target.closest(".tab-group").remove();
       });
     });
   }
 
   addTabListEvent() {
-    this.view.$tabListSaveButtons.forEach(($tabListSaveButton) => {
-      $tabListSaveButton.addEventListener("click", async ({ target }) => {
-        const windowId = getClosestTargetBySelector(target, ".window").dataset
-          .windowId;
-        this.model.saveTabsOfWindow(windowId);
-      });
-    });
-    this.view.$tabListDeleteButtons.forEach(($tabListDeleteButton) => {
-      $tabListDeleteButton.addEventListener("click", ({ target }) => {
-        const windowId = Number(
-          getClosestTargetBySelector(target, ".window").dataset.windowId
-        );
-        this.model.removeWindow(windowId);
-      });
-    });
+    this.view.$currentTabListSaveButtons.forEach(
+      ($currentTabListSaveButton) => {
+        $currentTabListSaveButton.addEventListener("click", ({ target }) => {
+          const windowId = getClosestTargetBySelector(target, ".window").dataset
+            .windowId;
+          this.model.saveTabsOfWindow(windowId);
+        });
+      }
+    );
+    this.view.$currentTabListDeleteButtons.forEach(
+      ($currentTabListDeleteButton) => {
+        $currentTabListDeleteButton.addEventListener("click", ({ target }) => {
+          const windowId = Number(
+            getClosestTargetBySelector(target, ".window").dataset.windowId
+          );
+          this.model.removeWindow(windowId);
+        });
+      }
+    );
   }
 
   addTabEntryEvent() {
-    this.view.$tabCopyButtons.forEach(($tabCopyButton) => {
-      $tabCopyButton.addEventListener("click", async ({ currentTarget }) => {
-        await navigator.clipboard.writeText(currentTarget.dataset.tabUrl);
-      });
+    this.view.$currentTabCopyButtons.forEach(($currentTabCopyButton) => {
+      $currentTabCopyButton.addEventListener(
+        "click",
+        async ({ currentTarget }) => {
+          await navigator.clipboard.writeText(currentTarget.dataset.tabUrl);
+        }
+      );
     });
-    this.view.$tabDeleteButtons.forEach(($tabDeleteButton) => {
-      $tabDeleteButton.addEventListener("click", ({ currentTarget }) => {
+    this.view.$currentTabDeleteButtons.forEach(($currentTabDeleteButton) => {
+      $currentTabDeleteButton.addEventListener("click", ({ currentTarget }) => {
         const tabId = currentTarget.dataset.tabId;
         this.model.removeTab(tabId);
         this.view.removeTab(currentTarget);
       });
     });
-    this.view.$tabTitleButtons.forEach(($tabTitleButton) => {
-      $tabTitleButton.addEventListener("click", async ({ currentTarget }) => {
+    this.view.$currentTabTitleButtons.forEach(($currentTabTitleButton) => {
+      $currentTabTitleButton.addEventListener("click", ({ currentTarget }) => {
         const windowId = Number(
           getClosestTargetBySelector(currentTarget, ".window").dataset.windowId
         );
