@@ -1,6 +1,7 @@
 import generateTabGroupTemplate from "./templates/tabGroup";
 import generateTabListTemplate from "./templates/tabList";
 import getClosestTargetBySelector from "./utils/getClosestTargetBySelector";
+import fadeOut from "./utils/fadeOut";
 
 class View {
   constructor() {
@@ -10,14 +11,8 @@ class View {
     this.$currentTabs = document.querySelector(".current-tabs");
     this.$tabGroups = document.querySelector(".tab-groups");
     this.$tabUsage = document.querySelector(".tab-usage");
+    this.$toastContainer = document.querySelector(".toast-container");
   }
-
-  // bind(event, handler) {
-  //   switch (event) {
-  //     default:
-  //       throw new Error("wrong event name");
-  //   }
-  // }
 
   render(name, data) {
     switch (name) {
@@ -105,7 +100,7 @@ class View {
     const $tabList = getClosestTargetBySelector($elem, ".tab-list").children;
     const $tabGroup = getClosestTargetBySelector($elem, ".tab-group");
     const tabUrl = $elem.previousElementSibling.dataset.tabUrl;
-    const groupName = $tabGroup.dataset.groupName;
+    const groupName = decodeURIComponent($tabGroup.dataset.groupName);
     getClosestTargetBySelector($elem, ".tab-entry").remove();
 
     if ($tabList.length === 0) {
@@ -122,17 +117,19 @@ class View {
 
   changeGroupTitle($elem, callback) {
     const $tabGroup = getClosestTargetBySelector($elem, ".tab-group");
-    const prevName = $tabGroup.dataset.groupName;
+    const prevName = decodeURIComponent($tabGroup.dataset.groupName);
     const newName = $elem.querySelector(".group-title").value;
     console.log("View changeGroupTitle newName " + newName);
-    $tabGroup.dataset.groupName = encodeURIComponent(newName);
+    $tabGroup.dataset.groupName = newName;
     console.log("View changeGroupTitle dataset " + $tabGroup.dataset.groupName);
-    callback(prevName, newName);
+    callback(prevName, newName, this.createToast.bind(this));
   }
 
   expandGroup($elem) {
     $elem.classList.toggle("active");
     const $expansion = $elem.parentNode.nextElementSibling;
+    const $expandIcon = $elem.querySelector(".expand-icon");
+    $expandIcon.classList.toggle("rotate");
 
     if ($expansion.style.maxHeight) {
       $expansion.style.maxHeight = null;
@@ -143,7 +140,7 @@ class View {
 
   removeGroup($elem, callback) {
     const $tabGroup = getClosestTargetBySelector($elem, ".tab-group");
-    const groupName = $tabGroup.dataset.groupName;
+    const groupName = decodeURIComponent($tabGroup.dataset.groupName);
     console.log(groupName);
     $tabGroup.remove();
     callback(groupName);
@@ -151,12 +148,18 @@ class View {
 
   openGroup($elem, callback) {
     const $tabGroup = getClosestTargetBySelector($elem, ".tab-group");
-    const groupName = $tabGroup.dataset.groupName;
-    console.log("View openGroup dataset groupName" + groupName);
-    console.log(
-      "View openGroup decoded groupName" + decodeURIComponent(groupName)
-    );
-    callback(decodeURIComponent(groupName));
+    const groupName = decodeURIComponent($tabGroup.dataset.groupName);
+    console.log("View openGroup decoded groupName " + groupName);
+    callback(groupName);
+  }
+
+  createToast(text) {
+    const $toast = document.createElement("div");
+    $toast.classList.add("toast");
+    $toast.textContent = text;
+    this.$toastContainer.appendChild($toast);
+
+    setTimeout(() => fadeOut($toast), 500);
   }
 }
 

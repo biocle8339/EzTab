@@ -2,7 +2,7 @@ import generateGroupTabEntryTemplate from "./groupTabEntry";
 
 const generateTabGroupTemplate = (tabs, groupName) => {
   return `
-  <div class="tab-group" data-group-name=${groupName}>
+  <div class="tab-group" data-group-name=${encodeURIComponent(groupName)}>
     <div class="group-header">
       <button class="collapsible group-button">
         <img class="icon expand-icon" src="./assets/images/expand-icon.png" />

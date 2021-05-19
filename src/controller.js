@@ -11,6 +11,7 @@ class Controller {
     this.view.$navigation.addEventListener("click", ({ target }) => {
       const $navLink = getClosestTargetBySelector(target, ".nav-link");
       this.view.$marker.style.transform = `translateX(${$navLink.dataset.distance}px)`;
+      setTimeout(() => window.scroll({ top: 0, behavior: "smooth" }), 300);
 
       const tabName =
         target.tagName !== "SPAN"
@@ -28,7 +29,6 @@ class Controller {
           console.log("controller - tabGroup nav");
           console.log(this.model._tabGroups);
           data = this.model.tabGroups;
-          window.scroll({ top: 0, behavior: "smooth" });
           this.view.$carousel.style.left = "-500px";
           break;
         case "Tab Usage":
@@ -56,17 +56,6 @@ class Controller {
           throw new Error("Invalid tab name");
       }
     });
-
-    // const windows = this.model.sortWindows(this.model.windows);
-
-    // if (!windows) {
-    //   return;
-    // }
-
-    // this.view.render("Current Tabs", windows);
-
-    // this.addTabListEvent();
-    // this.addTabEntryEvent();
   }
 
   renderInitialView(data) {
@@ -131,7 +120,10 @@ class Controller {
       ($currentTabListSaveButton) => {
         $currentTabListSaveButton.addEventListener("click", ({ target }) => {
           const windowId = this.view.getWindowId(target);
-          this.model.saveTabsOfWindow(windowId);
+          this.model.saveTabsOfWindow(
+            windowId,
+            this.view.createToast.bind(this.view)
+          );
         });
       }
     );

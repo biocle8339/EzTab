@@ -1,8 +1,10 @@
+import convertHTMLSpecialCharacters from "../utils/convertHTMLSpecialCharacters";
+
 const generateGroupTabEntryTemplate = (tab) => {
   return `
   <div class="tab-entry">
     <button class="tab-title-button">
-      <h3 class="tab-title">${tab.title}</h3>
+      <h3 class="tab-title">${convertHTMLSpecialCharacters(tab.title)}</h3>
     </button>
     <button class="tab-icon-button tab-copy-button" data-tab-url=${tab.url}>
       <img class="icon copy-icon" src="./assets/images/copy-icon.png" />

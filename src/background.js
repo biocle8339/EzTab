@@ -22,12 +22,9 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
       chrome.windows.remove(request.payload.windowId);
       break;
     case "saveGroup":
-      chrome.storage.sync.set(request.payload);
-      // chrome.notifications.create("", {
-      //   title: "Just wanted to notify you",
-      //   message: "How great it is!",
-      //   type: "basic",
-      // });
+      setStorageSyncData(request.payload).then(() =>
+        sendResponse({ name: "groupSaved", payload: { text: "Group Saved" } })
+      );
       break;
     case "removeGroup":
       chrome.storage.sync.remove(request.payload.groupName);
@@ -41,7 +38,12 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
       break;
     case "changeGroupName": {
       const { prevName, newName } = request.payload;
-      changeGroupName(prevName, newName);
+      changeGroupName(prevName, newName).then(() =>
+        sendResponse({
+          name: "groupNameChanged",
+          payload: { text: "Groupname Changed" },
+        })
+      );
       break;
     }
     case "removeGroupTab": {
@@ -55,7 +57,6 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
       break;
   }
 
-  console.log("hi");
   return true;
 });
 
@@ -118,6 +119,18 @@ const getStorageSyncData = (key = null) => {
       }
 
       resolve(items);
+    });
+  });
+};
+
+const setStorageSyncData = (options) => {
+  return new Promise((resolve, reject) => {
+    chrome.storage.sync.set(options, () => {
+      if (chrome.runtime.lastError) {
+        return reject(chrome.runtime.lastError);
+      }
+
+      resolve();
     });
   });
 };

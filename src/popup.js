@@ -7,7 +7,6 @@ const init = () => {
   const model = new Model();
   const view = new View();
   const controller = new Controller(model, view);
-  // await model.setInitialState();
   controller.init();
   console.log("popup init");
 };
