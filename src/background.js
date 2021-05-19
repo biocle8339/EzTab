@@ -23,6 +23,11 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
       break;
     case "saveGroup":
       chrome.storage.sync.set(request.payload);
+      // chrome.notifications.create("", {
+      //   title: "Just wanted to notify you",
+      //   message: "How great it is!",
+      //   type: "basic",
+      // });
       break;
     case "removeGroup":
       chrome.storage.sync.remove(request.payload.groupName);

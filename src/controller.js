@@ -28,6 +28,7 @@ class Controller {
           console.log("controller - tabGroup nav");
           console.log(this.model._tabGroups);
           data = this.model.tabGroups;
+          window.scroll({ top: 0, behavior: "smooth" });
           this.view.$carousel.style.left = "-500px";
           break;
         case "Tab Usage":
@@ -105,7 +106,7 @@ class Controller {
   }
 
   addTabGroupEntryEvent() {
-    this.view.$groupTabCopyButtons.forEach(($groupTabCopyButton) => {
+    this.view.$groupTabCopyButtons?.forEach(($groupTabCopyButton) => {
       $groupTabCopyButton.addEventListener(
         "click",
         async ({ currentTarget }) => {
@@ -113,12 +114,12 @@ class Controller {
         }
       );
     });
-    this.view.$groupTabDeleteButtons.forEach(($groupTabDeleteButton) => {
+    this.view.$groupTabDeleteButtons?.forEach(($groupTabDeleteButton) => {
       $groupTabDeleteButton.addEventListener("click", ({ currentTarget }) => {
         this.view.removeGroupTab(currentTarget, this.model.removeGroupTab);
       });
     });
-    this.view.$groupTabTitleButtons.forEach(($groupTabTitleButton) => {
+    this.view.$groupTabTitleButtons?.forEach(($groupTabTitleButton) => {
       $groupTabTitleButton.addEventListener("click", ({ currentTarget }) => {
         this.view.openTab(currentTarget, this.model.openTab);
       });

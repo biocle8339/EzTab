@@ -143,6 +143,7 @@ class Model {
   }
 
   openGroup(groupName) {
+    console.log("model openGroup " + groupName);
     const url = this._tabGroups[groupName].map((tabGroup) => tabGroup.url);
     chrome.runtime.sendMessage({
       name: "openGroup",

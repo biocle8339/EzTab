@@ -124,7 +124,9 @@ class View {
     const $tabGroup = getClosestTargetBySelector($elem, ".tab-group");
     const prevName = $tabGroup.dataset.groupName;
     const newName = $elem.querySelector(".group-title").value;
-    $tabGroup.dataset.groupName = newName;
+    console.log("View changeGroupTitle newName " + newName);
+    $tabGroup.dataset.groupName = encodeURIComponent(newName);
+    console.log("View changeGroupTitle dataset " + $tabGroup.dataset.groupName);
     callback(prevName, newName);
   }
 
@@ -150,8 +152,11 @@ class View {
   openGroup($elem, callback) {
     const $tabGroup = getClosestTargetBySelector($elem, ".tab-group");
     const groupName = $tabGroup.dataset.groupName;
-    console.log(groupName);
-    callback(groupName);
+    console.log("View openGroup dataset groupName" + groupName);
+    console.log(
+      "View openGroup decoded groupName" + decodeURIComponent(groupName)
+    );
+    callback(decodeURIComponent(groupName));
   }
 }
 
