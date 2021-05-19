@@ -2,6 +2,7 @@ import generateTabGroupTemplate from "./templates/tabGroup";
 import generateTabListTemplate from "./templates/tabList";
 import getClosestTargetBySelector from "./utils/getClosestTargetBySelector";
 import fadeOut from "./utils/fadeOut";
+import parseHTML from "./utils/parseHTML";
 
 class View {
   constructor() {
@@ -12,16 +13,19 @@ class View {
     this.$tabGroups = document.querySelector(".tab-groups");
     this.$tabUsage = document.querySelector(".tab-usage");
     this.$toastContainer = document.querySelector(".toast-container");
+    this.$search = document.querySelector(".search");
   }
 
   render(name, data) {
     switch (name) {
       case "Current Tabs": {
+        console.log("view render currentTabs");
+        console.dir(data);
         const template = data.payload.windows.reduce((acc, curr) => {
           return acc + generateTabListTemplate(curr);
         }, "");
 
-        this.$currentTabs.innerHTML = template;
+        this.$currentTabs.appendChild(parseHTML(template));
         this.$currentTabListSaveButtons = this.$currentTabs.querySelectorAll(
           ".tabs-save-button"
         );
@@ -49,7 +53,8 @@ class View {
           return acc + generateTabGroupTemplate(curr.tabs, curr.groupName);
         }, "");
 
-        this.$tabGroups.innerHTML = template;
+        this.$tabGroups.textContent = "";
+        this.$tabGroups.appendChild(parseHTML(template));
         this.$groupTitleForms = this.$tabGroups.querySelectorAll(
           ".group-title-form"
         );
@@ -81,6 +86,17 @@ class View {
       }
       default:
         throw new Error("wrong render name");
+    }
+  }
+
+  resetCurrentTabs() {
+    console.log("view resetCurrentTabs");
+    const $children = this.$currentTabs.children;
+
+    for (let i = $children.length - 1; i >= 0; i--) {
+      if (!$children[i].classList.contains("search-container")) {
+        $children[i].remove();
+      }
     }
   }
 
