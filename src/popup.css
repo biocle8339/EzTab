@@ -247,10 +247,13 @@ main {
   cursor: pointer;
 }
 
-/*나중에 css 확인 후 바꾸던지*/
-/* .tab-groups {
-  margin-top: 10px;
-} */
+.expand-icon {
+  transition: all 0.3s ease-in-out;
+}
+
+.rotate {
+  transform: rotate(180deg);
+}
 
 .group-header {
   display: flex;
@@ -258,7 +261,6 @@ main {
   width: 469px;
 }
 
-/*tabGroups용 버튼 차후 수정예정 */
 .group-button {
   padding: 8px 18px;
   border: none;
@@ -300,4 +302,24 @@ main {
   overflow: hidden;
   transition: max-height 0.2s ease-out;
   background-color: #f1f1f1;
+}
+
+.toast-container {
+  position: fixed;
+  bottom: 10px;
+  display: flex;
+  flex-flow: column;
+  align-items: center;
+  width: 100%;
+}
+
+.toast {
+  margin-bottom: 5px;
+  padding: 1px 5px;
+  height: 30px;
+  background: var(--main-indigo);
+  color: var(--main-white);
+  font-family: var(--gaegu);
+  font-size: 22px;
+  text-align: center;
 }

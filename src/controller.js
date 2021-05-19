@@ -11,6 +11,7 @@ class Controller {
     this.view.$navigation.addEventListener("click", ({ target }) => {
       const $navLink = getClosestTargetBySelector(target, ".nav-link");
       this.view.$marker.style.transform = `translateX(${$navLink.dataset.distance}px)`;
+      setTimeout(() => window.scroll({ top: 0, behavior: "smooth" }), 300);
 
       const tabName =
         target.tagName !== "SPAN"
@@ -55,17 +56,6 @@ class Controller {
           throw new Error("Invalid tab name");
       }
     });
-
-    // const windows = this.model.sortWindows(this.model.windows);
-
-    // if (!windows) {
-    //   return;
-    // }
-
-    // this.view.render("Current Tabs", windows);
-
-    // this.addTabListEvent();
-    // this.addTabEntryEvent();
   }
 
   renderInitialView(data) {
@@ -105,7 +95,7 @@ class Controller {
   }
 
   addTabGroupEntryEvent() {
-    this.view.$groupTabCopyButtons.forEach(($groupTabCopyButton) => {
+    this.view.$groupTabCopyButtons?.forEach(($groupTabCopyButton) => {
       $groupTabCopyButton.addEventListener(
         "click",
         async ({ currentTarget }) => {
@@ -113,12 +103,12 @@ class Controller {
         }
       );
     });
-    this.view.$groupTabDeleteButtons.forEach(($groupTabDeleteButton) => {
+    this.view.$groupTabDeleteButtons?.forEach(($groupTabDeleteButton) => {
       $groupTabDeleteButton.addEventListener("click", ({ currentTarget }) => {
         this.view.removeGroupTab(currentTarget, this.model.removeGroupTab);
       });
     });
-    this.view.$groupTabTitleButtons.forEach(($groupTabTitleButton) => {
+    this.view.$groupTabTitleButtons?.forEach(($groupTabTitleButton) => {
       $groupTabTitleButton.addEventListener("click", ({ currentTarget }) => {
         this.view.openTab(currentTarget, this.model.openTab);
       });
@@ -130,7 +120,10 @@ class Controller {
       ($currentTabListSaveButton) => {
         $currentTabListSaveButton.addEventListener("click", ({ target }) => {
           const windowId = this.view.getWindowId(target);
-          this.model.saveTabsOfWindow(windowId);
+          this.model.saveTabsOfWindow(
+            windowId,
+            this.view.createToast.bind(this.view)
+          );
         });
       }
     );

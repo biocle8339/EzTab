@@ -3,15 +3,9 @@ class Model {
     this._windows = null;
     this._currentWindow = null;
     this._tabGroups = {};
-    // this.listeners = {};
 
     chrome.runtime.onMessage.addListener((request) => {
       switch (request.name) {
-        // case "initState":
-        //   this._currentWindow = request.payload.currentWindow;
-        //   this._windows = request.payload.windows;
-        //   this._tabGroups = request.payload.tabGroups;
-        //   break;
         case "storageUpdated":
           for (let [key, { oldValue, newValue }] of Object.entries(
             request.payload
@@ -29,10 +23,6 @@ class Model {
       }
     });
   }
-
-  // bind(name, callback) {
-  //   this.listeners[name] = callback;
-  // }
 
   get windows() {
     return this._windows;
@@ -122,17 +112,23 @@ class Model {
     });
   }
 
-  saveTabsOfWindow(windowId) {
+  saveTabsOfWindow(windowId, callback) {
     const key = new Date().toISOString();
     const options = {};
     const tabs = this._windows
       .find((window) => window.id === windowId)
       .tabs.map((tab) => ({ title: tab.title, url: tab.url }));
     options[key] = tabs;
-    chrome.runtime.sendMessage({
-      name: "saveGroup",
-      payload: options,
-    });
+
+    chrome.runtime.sendMessage(
+      {
+        name: "saveGroup",
+        payload: options,
+      },
+      (res) => {
+        callback(res.payload.text);
+      }
+    );
   }
 
   removeGroup(groupName) {
@@ -143,6 +139,7 @@ class Model {
   }
 
   openGroup(groupName) {
+    console.log("model openGroup " + groupName);
     const url = this._tabGroups[groupName].map((tabGroup) => tabGroup.url);
     chrome.runtime.sendMessage({
       name: "openGroup",
@@ -150,11 +147,16 @@ class Model {
     });
   }
 
-  changeGroupTitle(prevName, newName) {
-    chrome.runtime.sendMessage({
-      name: "changeGroupName",
-      payload: { prevName, newName },
-    });
+  changeGroupTitle(prevName, newName, callback) {
+    chrome.runtime.sendMessage(
+      {
+        name: "changeGroupName",
+        payload: { prevName, newName },
+      },
+      (res) => {
+        callback(res.payload.text);
+      }
+    );
   }
 
   removeGroupTab(groupName, tabUrl) {
