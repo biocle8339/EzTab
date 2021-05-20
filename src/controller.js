@@ -3,11 +3,14 @@ import getClosestTargetBySelector from "./utils/getClosestTargetBySelector.js";
 
 class Controller {
   constructor(model, view) {
+    console.log("controller constructor");
     this.model = model;
     this.view = view;
   }
 
-  init() {
+  async init() {
+    console.log("controller init");
+    await this.model.setCurrentWindowId();
     this.model.setInitialState(this.renderCurrentTabs.bind(this));
     this.addSearchEvent();
     this.view.$navigation.addEventListener("click", ({ target }) => {
@@ -19,7 +22,6 @@ class Controller {
         target.tagName !== "SPAN"
           ? target.querySelector("span").textContent
           : target.textContent;
-
       let data;
 
       switch (tabName) {
@@ -42,22 +44,9 @@ class Controller {
           throw new Error("Invalid tab name");
       }
 
-      //나중에 memoized해서 model바껴야만 바뀌도록해줘야함
-      // this.view.render(tabName, data);
-
       switch (tabName) {
-        // case "Current Tabs":
-        //   this.addTabListEvent();
-        //   this.addTabEntryEvent();
-        //   break;
-        // case "Tab Groups":
-        //   this.addTabGroupEvent();
-        //   this.addTabGroupEntryEvent();
-        //   break;
         case "Tab Usage":
           break;
-        // default:
-        //   throw new Error("Invalid tab name");
       }
     });
   }
@@ -68,13 +57,13 @@ class Controller {
     this.view.resetCurrentTabs();
     this.view.render("Current Tabs", data);
     this.addTabListEvent();
-    this.addTabEntryEvent(data.currentWindowId);
+    this.addTabEntryEvent();
   }
 
   renderTabGroups(data) {
     console.log("controller renderTabGroups");
     console.dir(data);
-    this.view.resetCurrentTabs();
+    // this.view.resetCurrentTabs();
     this.view.render("Tab Groups", data);
     this.addTabGroupEvent();
     this.addTabGroupEntryEvent();
@@ -163,7 +152,7 @@ class Controller {
     );
   }
 
-  addTabEntryEvent(currentWindowId) {
+  addTabEntryEvent() {
     this.view.$currentTabCopyButtons.forEach(($currentTabCopyButton) => {
       $currentTabCopyButton.addEventListener(
         "click",
@@ -182,7 +171,7 @@ class Controller {
         const windowId = this.view.getWindowId(currentTarget);
         const tabId = Number(currentTarget.dataset.tabId);
 
-        if (currentWindowId !== windowId) {
+        if (this.model.currentWindowId !== windowId) {
           this.model.changeWindow(windowId);
         }
 

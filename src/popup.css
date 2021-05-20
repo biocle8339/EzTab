@@ -255,7 +255,7 @@ main {
 }
 
 .rotate {
-  transform: rotate(180deg);
+  transform: rotate3d(1, 0, 0, 180deg);
 }
 
 .group-header {
@@ -265,7 +265,9 @@ main {
 }
 
 .group-button {
-  padding: 8px 18px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   border: none;
   outline: none;
   text-align: center;
@@ -276,7 +278,6 @@ main {
 
 .group-title-form {
   display: flex;
-  justify-content: center;
   align-items: center;
   width: 427px;
   background-color: #777;
@@ -285,6 +286,8 @@ main {
 
 .group-title {
   height: 40px;
+  width: 95%;
+  margin: 0 10px;
   border: none;
   background-color: #777;
   color: var(--main-white);
