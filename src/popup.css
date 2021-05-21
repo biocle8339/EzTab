@@ -10,14 +10,14 @@
 }
 
 html {
-  width: 500px;
-  height: 500px;
+  width: 400px;
+  height: 400px;
 }
 
 body {
   margin: 0;
-  width: 500px;
-  height: 500px;
+  width: 400px;
+  height: 400px;
   background: var(--main-gray);
   overflow-x: hidden;
 }
@@ -64,7 +64,7 @@ header {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 34%;
+  width: 35%;
   height: 100%;
 }
 
@@ -79,7 +79,7 @@ header {
 
 .marker {
   position: relative;
-  left: 10px;
+  left: 26px;
   width: 150px;
   height: 3px;
   background: var(--main-black);
@@ -113,7 +113,7 @@ main {
   display: flex;
   flex-flow: column;
   align-items: center;
-  width: 500px;
+  width: 400px;
   background: var(--main-gray);
 }
 
@@ -215,7 +215,7 @@ main {
 .tab-title-button {
   display: flex;
   align-content: center;
-  width: 361px;
+  width: 272px;
   height: 100%;
   padding-left: 7px;
   border: none;
@@ -258,10 +258,13 @@ main {
   transform: rotate3d(1, 0, 0, 180deg);
 }
 
+.tab-group {
+  width: 380px;
+}
+
 .group-header {
   display: flex;
   margin-top: 20px;
-  width: 469px;
 }
 
 .group-button {
@@ -279,7 +282,7 @@ main {
 .group-title-form {
   display: flex;
   align-items: center;
-  width: 427px;
+  width: 300px;
   background-color: #777;
   color: var(--main-white);
 }

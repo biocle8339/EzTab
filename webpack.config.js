@@ -7,7 +7,6 @@ module.exports = {
   mode: process.env.NODE_ENV || "development",
   entry: {
     popup: path.join(__dirname, "src", "popup.js"),
-    options: path.join(__dirname, "src", "options.js"),
     background: path.join(__dirname, "src", "background.js"),
   },
   output: {
