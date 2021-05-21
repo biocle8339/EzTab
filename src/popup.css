@@ -122,8 +122,11 @@ main {
 }
 
 .search-container {
-  width: 98%;
+  display: flex;
+  justify-content: center;
   padding: 6px;
+  margin-bottom: 4px;
+  width: 98%;
 }
 
 .search {
@@ -132,7 +135,7 @@ main {
   padding: 8px 6px 10px 40px;
   line-height: 48px;
   height: 48px;
-  width: 100%;
+  width: 90%;
   background-image: url(./assets/images/search-icon.svg);
   background-repeat: no-repeat;
   background-size: 16px;

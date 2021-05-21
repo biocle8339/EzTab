@@ -1,14 +1,14 @@
 class Model {
   constructor() {
     this._windows = null;
-    this._currentWindow = null;
+    this._currentWindowId = null;
     this._tabGroups = {};
 
     chrome.runtime.onMessage.addListener((request) => {
       switch (request.name) {
         case "storageUpdated":
           for (let [key, { oldValue, newValue }] of Object.entries(
-            request.payload
+            request.payload.changes
           )) {
             if (!newValue) {
               delete this._tabGroups[key];
@@ -18,18 +18,26 @@ class Model {
             this._tabGroups[key] = newValue;
           }
           console.log("model storageUpdated");
-          console.dir(request.payload);
+          console.dir(request.payload.changes);
+          break;
+        case "windowFocusChanged":
+          console.log("model windowFocusChanged");
+          if (request.payload.windowId > 0) {
+            console.log("windowId " + request.payload.windowId);
+            this._currentWindowId = request.payload.windowId;
+          }
+
           break;
       }
     });
   }
 
-  get windows() {
-    return this._windows;
+  get currentWindowId() {
+    return this._currentWindowId;
   }
 
-  get currentWindow() {
-    return this._currentWindow;
+  get windows() {
+    return this._windows;
   }
 
   get tabGroups() {
@@ -53,7 +61,7 @@ class Model {
       (res) => {
         console.log("model init");
         console.log(res);
-        this._currentWindow = res.payload.currentWindow;
+        this._currentWindowId = res.payload.currentWindowId;
         this._windows = res.payload.windows;
         this._tabGroups = res.payload.tabGroups;
 
@@ -63,19 +71,60 @@ class Model {
   }
 
   sortWindows(windows) {
+    console.log("model sortWindows");
+    console.dir(windows);
     if (!windows) {
       return null;
     }
 
-    windows = windows.filter((window) => window.id !== this._currentWindow.id);
-    windows = [this._currentWindow].concat(windows).map((window) => ({
-      id: window.id,
-      isCurrent: this._currentWindow.id === window.id,
-      tabs: window.tabs,
-    }));
+    let currentWindow;
+    let sortedWindows = windows.filter((window) => {
+      if (window.id === this._currentWindowId) {
+        currentWindow = window;
+      }
 
-    return { payload: { windows } };
+      return window.id !== this._currentWindowId;
+    });
+    sortedWindows = [currentWindow].concat(sortedWindows);
+    sortedWindows.map((window) => ({
+      id: window?.id,
+      isCurrent: this._currentWindowId === window?.id,
+      tabs: window?.tabs,
+    }));
+    console.log("sortedWindows");
+    console.dir(sortedWindows);
+
+    return {
+      payload: { currentWindowId: currentWindow.id, windows: sortedWindows },
+    };
   }
+
+  search(value, callback) {
+    const searchedWindows = this.windows.map((window) => {
+      const tabs = window.tabs.filter(
+        (tab) => tab.title.includes(value) || tab.url.includes(value)
+      );
+
+      return { ...window, tabs };
+    });
+
+    console.log("model search");
+    console.dir(this.windows);
+    console.dir(searchedWindows);
+    callback(this.sortWindows(searchedWindows));
+  }
+
+  // getCurrentWindow() {
+  //   chrome.runtime.sendMessage(
+  //     {
+  //       name: "getCurrentWindow",
+  //       payload: null,
+  //     },
+  //     (res) => {
+  //       callback(res.payload.text);
+  //     }
+  //   );
+  // }
 
   removeWindow(windowId) {
     chrome.runtime.sendMessage({
@@ -113,6 +162,7 @@ class Model {
   }
 
   saveTabsOfWindow(windowId, callback) {
+    console.log("model saveTabsOfWindow");
     const key = new Date().toISOString();
     const options = {};
     const tabs = this._windows

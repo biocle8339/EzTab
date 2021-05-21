@@ -1,3 +1,4 @@
+import _ from "lodash";
 import getClosestTargetBySelector from "./utils/getClosestTargetBySelector.js";
 
 class Controller {
@@ -7,7 +8,8 @@ class Controller {
   }
 
   init() {
-    this.model.setInitialState(this.renderInitialView.bind(this));
+    this.model.setInitialState(this.renderCurrentTabs.bind(this));
+    this.addSearchEvent();
     this.view.$navigation.addEventListener("click", ({ target }) => {
       const $navLink = getClosestTargetBySelector(target, ".nav-link");
       this.view.$marker.style.transform = `translateX(${$navLink.dataset.distance}px)`;
@@ -24,12 +26,14 @@ class Controller {
         case "Current Tabs":
           data = this.model.sortWindows(this.model.windows);
           this.view.$carousel.style.left = "0px";
+          this.renderCurrentTabs(data);
           break;
         case "Tab Groups":
           console.log("controller - tabGroup nav");
           console.log(this.model._tabGroups);
           data = this.model.tabGroups;
           this.view.$carousel.style.left = "-500px";
+          this.renderTabGroups(data);
           break;
         case "Tab Usage":
           this.view.$carousel.style.left = "-1000px";
@@ -39,29 +43,41 @@ class Controller {
       }
 
       //나중에 memoized해서 model바껴야만 바뀌도록해줘야함
-      this.view.render(tabName, data);
+      // this.view.render(tabName, data);
 
       switch (tabName) {
-        case "Current Tabs":
-          this.addTabListEvent();
-          this.addTabEntryEvent();
-          break;
-        case "Tab Groups":
-          this.addTabGroupEvent();
-          this.addTabGroupEntryEvent();
-          break;
+        // case "Current Tabs":
+        //   this.addTabListEvent();
+        //   this.addTabEntryEvent();
+        //   break;
+        // case "Tab Groups":
+        //   this.addTabGroupEvent();
+        //   this.addTabGroupEntryEvent();
+        //   break;
         case "Tab Usage":
           break;
-        default:
-          throw new Error("Invalid tab name");
+        // default:
+        //   throw new Error("Invalid tab name");
       }
     });
   }
 
-  renderInitialView(data) {
+  renderCurrentTabs(data) {
+    console.log("controller renderCurrentTabs");
+    console.dir(data);
+    this.view.resetCurrentTabs();
     this.view.render("Current Tabs", data);
     this.addTabListEvent();
-    this.addTabEntryEvent();
+    this.addTabEntryEvent(data.currentWindowId);
+  }
+
+  renderTabGroups(data) {
+    console.log("controller renderTabGroups");
+    console.dir(data);
+    this.view.resetCurrentTabs();
+    this.view.render("Tab Groups", data);
+    this.addTabGroupEvent();
+    this.addTabGroupEntryEvent();
   }
 
   addTabGroupEvent() {
@@ -115,6 +131,16 @@ class Controller {
     });
   }
 
+  addSearchEvent() {
+    this.view.$search.addEventListener(
+      "input",
+      _.debounce(({ target }) => {
+        console.log("controller search event debounce");
+        this.model.search(target.value, this.renderCurrentTabs.bind(this));
+      }, 300)
+    );
+  }
+
   addTabListEvent() {
     this.view.$currentTabListSaveButtons.forEach(
       ($currentTabListSaveButton) => {
@@ -137,7 +163,7 @@ class Controller {
     );
   }
 
-  addTabEntryEvent() {
+  addTabEntryEvent(currentWindowId) {
     this.view.$currentTabCopyButtons.forEach(($currentTabCopyButton) => {
       $currentTabCopyButton.addEventListener(
         "click",
@@ -156,7 +182,7 @@ class Controller {
         const windowId = this.view.getWindowId(currentTarget);
         const tabId = Number(currentTarget.dataset.tabId);
 
-        if (this.model.currentWindow.id !== windowId) {
+        if (currentWindowId !== windowId) {
           this.model.changeWindow(windowId);
         }
 

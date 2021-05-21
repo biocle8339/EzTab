@@ -5,10 +5,12 @@ chrome.runtime.onInstalled.addListener(() => {
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   console.log("background " + request.name);
   switch (request.name) {
-    case "init": {
+    case "init":
       getInitialState().then((initalState) => sendResponse(initalState));
       break;
-    }
+    // case "getCurrentWindow":
+    //   getCurrentWindow().then((currentWindow) => sendResponse(currentWindow));
+    //   break;
     case "changeTab":
       chrome.tabs.update(request.payload.tabId, { active: true });
       break;
@@ -65,7 +67,14 @@ chrome.storage.onChanged.addListener(function (changes, namespace) {
   console.dir(changes);
   chrome.runtime.sendMessage({
     name: "storageUpdated",
-    payload: changes,
+    payload: { changes },
+  });
+});
+
+chrome.windows.onFocusChanged.addListener(function (windowId) {
+  chrome.runtime.sendMessage({
+    name: "windowFocusChanged",
+    payload: { windowId },
   });
 });
 
@@ -79,7 +88,7 @@ const getInitialState = async () => {
   return {
     name: "initRes",
     payload: {
-      currentWindow,
+      currentWindowId: currentWindow.id,
       windows,
       tabGroups,
     },
