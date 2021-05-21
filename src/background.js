@@ -1,16 +1,15 @@
-chrome.runtime.onInstalled.addListener(() => {
-  console.log("now it is installed");
+chrome.runtime.onInstalled.addListener(async () => {
+  console.log("background installed");
 });
 
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   console.log("background " + request.name);
+  console.log(new Date().toString());
+  console.log(sender);
   switch (request.name) {
     case "init":
       getInitialState().then((initalState) => sendResponse(initalState));
       break;
-    // case "getCurrentWindow":
-    //   getCurrentWindow().then((currentWindow) => sendResponse(currentWindow));
-    //   break;
     case "changeTab":
       chrome.tabs.update(request.payload.tabId, { active: true });
       break;
@@ -57,12 +56,14 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
       console.log(request.payload);
       chrome.windows.create({ url: request.payload.url });
       break;
+    default:
+      console.log("Not Valid Request To Background");
   }
 
   return true;
 });
 
-chrome.storage.onChanged.addListener(function (changes, namespace) {
+chrome.storage.onChanged.addListener((changes, namespace) => {
   console.log("background storage onChanged");
   console.dir(changes);
   chrome.runtime.sendMessage({
@@ -71,18 +72,27 @@ chrome.storage.onChanged.addListener(function (changes, namespace) {
   });
 });
 
-chrome.windows.onFocusChanged.addListener(function (windowId) {
-  chrome.runtime.sendMessage({
-    name: "windowFocusChanged",
-    payload: { windowId },
-  });
-});
+// chrome.windows.onFocusChanged.addListener((windowId) => {
+//   chrome.windows.update(
+//     windowId,
+//     { drawAttention: true, focused: true },
+//     (window) => {
+//       chrome.runtime.sendMessage({
+//         name: "windowFocusChanged",
+//         payload: { windowId: window.id },
+//       });
+//     }
+//   );
+// });
 
 const getInitialState = async () => {
+  console.log("background getInitialState");
   const currentWindow = await chrome.windows.getCurrent({
     populate: true,
   });
+  console.log(currentWindow.id);
   const windows = await chrome.windows.getAll({ populate: true });
+  console.log(windows);
   const tabGroups = await getStorageSyncData();
 
   return {

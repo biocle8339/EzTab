@@ -22,6 +22,7 @@ class View {
         console.log("view render currentTabs");
         console.dir(data);
         const template = data.payload.windows.reduce((acc, curr) => {
+          console.log(curr);
           return acc + generateTabListTemplate(curr);
         }, "");
 
