@@ -3,13 +3,11 @@ import getClosestTargetBySelector from "./utils/getClosestTargetBySelector.js";
 
 class Controller {
   constructor(model, view) {
-    console.log("controller constructor");
     this.model = model;
     this.view = view;
   }
 
   async init() {
-    console.log("controller init");
     await this.model.setCurrentWindowId();
     this.model.setInitialState(this.renderCurrentTabs.bind(this));
     this.addSearchEvent();
@@ -31,29 +29,17 @@ class Controller {
           this.renderCurrentTabs(data);
           break;
         case "Tab Groups":
-          console.log("controller - tabGroup nav");
-          console.log(this.model._tabGroups);
           data = this.model.tabGroups;
-          this.view.$carousel.style.left = "-500px";
+          this.view.$carousel.style.left = "-400px";
           this.renderTabGroups(data);
-          break;
-        case "Tab Usage":
-          this.view.$carousel.style.left = "-1000px";
           break;
         default:
           throw new Error("Invalid tab name");
-      }
-
-      switch (tabName) {
-        case "Tab Usage":
-          break;
       }
     });
   }
 
   renderCurrentTabs(data) {
-    console.log("controller renderCurrentTabs");
-    console.dir(data);
     this.view.resetCurrentTabs();
     this.view.render("Current Tabs", data);
     this.addTabListEvent();
@@ -61,9 +47,6 @@ class Controller {
   }
 
   renderTabGroups(data) {
-    console.log("controller renderTabGroups");
-    console.dir(data);
-    // this.view.resetCurrentTabs();
     this.view.render("Tab Groups", data);
     this.addTabGroupEvent();
     this.addTabGroupEntryEvent();
@@ -73,7 +56,7 @@ class Controller {
     this.view.$groupTitleForms?.forEach(($groupTitleForm) => {
       $groupTitleForm.addEventListener("submit", (event) => {
         event.preventDefault();
-        this.view.changeGroupTitle(event.target, this.model.changeGroupTitle);
+        this.view.changeGroupName(event.target, this.model.changeGroupName);
       });
     });
     this.view.$groupCollapsibleButtons?.forEach(($groupCollapsibleButton) => {
@@ -82,15 +65,12 @@ class Controller {
       });
     });
     this.view.$groupDeleteButtons?.forEach(($groupDeleteButton) => {
-      // this.model.clearAllStorageSyncData();
       $groupDeleteButton.addEventListener("click", ({ currentTarget }) => {
-        console.log("controller deleteGroup button event");
         this.view.removeGroup(currentTarget, this.model.removeGroup);
       });
     });
     this.view.$groupOpenButtons?.forEach(($groupOpenButton) => {
       $groupOpenButton.addEventListener("click", ({ currentTarget }) => {
-        console.log("controller openGroup button event");
         this.view.openGroup(
           currentTarget,
           this.model.openGroup.bind(this.model)
@@ -124,7 +104,6 @@ class Controller {
     this.view.$search.addEventListener(
       "input",
       _.debounce(({ target }) => {
-        console.log("controller search event debounce");
         this.model.search(target.value, this.renderCurrentTabs.bind(this));
       }, 300)
     );
@@ -135,6 +114,7 @@ class Controller {
       ($currentTabListSaveButton) => {
         $currentTabListSaveButton.addEventListener("click", ({ target }) => {
           const windowId = this.view.getWindowId(target);
+
           this.model.saveTabsOfWindow(
             windowId,
             this.view.createToast.bind(this.view)
@@ -146,6 +126,7 @@ class Controller {
       ($currentTabListCloseButton) => {
         $currentTabListCloseButton.addEventListener("click", ({ target }) => {
           const windowId = this.view.getWindowId(target);
+
           this.model.removeWindow(windowId);
         });
       }

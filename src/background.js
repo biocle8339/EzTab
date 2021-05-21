@@ -1,98 +1,73 @@
-chrome.runtime.onInstalled.addListener(async () => {
-  console.log("background installed");
-});
+import messageName from "./constants/messageName";
 
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-  console.log("background " + request.name);
-  console.log(new Date().toString());
-  console.log(sender);
   switch (request.name) {
-    case "init":
+    case messageName.INIT:
       getInitialState().then((initalState) => sendResponse(initalState));
       break;
-    case "changeTab":
+    case messageName.CHANGE_TAB:
       chrome.tabs.update(request.payload.tabId, { active: true });
       break;
-    case "changeWindow":
+    case messageName.CHANGE_WINDOW:
       chrome.windows.update(request.payload.windowId, { focused: true });
       break;
-    case "removeTab":
+    case messageName.REMOVE_TAB:
       chrome.tabs.remove(Number(request.payload.tabId));
       break;
-    case "removeWindow":
+    case messageName.REMOVE_WINDOW:
       chrome.windows.remove(request.payload.windowId);
       break;
-    case "saveGroup":
+    case messageName.SAVE_GROUP:
       setStorageSyncData(request.payload).then(() =>
         sendResponse({ name: "groupSaved", payload: { text: "Group Saved" } })
       );
       break;
-    case "removeGroup":
+    case messageName.REMOVE_GROUP:
       chrome.storage.sync.remove(request.payload.groupName);
       break;
-    case "openGroup":
-      console.log(request.payload);
+    case messageName.OPEN_GROUP:
       chrome.windows.create({ url: request.payload.url });
       break;
-    case "clearGroups":
+    case messageName.CLEAR_GROUPS:
       chrome.storage.sync.clear();
       break;
-    case "changeGroupName": {
+    case messageName.CHANGE_GROUP_NAME: {
       const { prevName, newName } = request.payload;
+
       changeGroupName(prevName, newName).then(() =>
         sendResponse({
-          name: "groupNameChanged",
+          name: messageName.CHANGE_GROUP_NAME,
           payload: { text: "Groupname Changed" },
         })
       );
       break;
     }
-    case "removeGroupTab": {
+    case messageName.REMOVE_GROUP_TAB: {
       const { groupName, tabUrl } = request.payload;
+
       removeGroupTab(groupName, tabUrl);
       break;
     }
-    case "openTab":
-      console.log(request.payload);
+    case messageName.OPEN_TAB:
       chrome.windows.create({ url: request.payload.url });
       break;
-    default:
-      console.log("Not Valid Request To Background");
   }
 
   return true;
 });
 
-chrome.storage.onChanged.addListener((changes, namespace) => {
-  console.log("background storage onChanged");
-  console.dir(changes);
+chrome.storage.onChanged.addListener((changes) => {
   chrome.runtime.sendMessage({
-    name: "storageUpdated",
+    name: messageName.STORAGE_UPDATED,
     payload: { changes },
   });
 });
 
-// chrome.windows.onFocusChanged.addListener((windowId) => {
-//   chrome.windows.update(
-//     windowId,
-//     { drawAttention: true, focused: true },
-//     (window) => {
-//       chrome.runtime.sendMessage({
-//         name: "windowFocusChanged",
-//         payload: { windowId: window.id },
-//       });
-//     }
-//   );
-// });
-
 const getInitialState = async () => {
-  console.log("background getInitialState");
   const currentWindow = await chrome.windows.getCurrent({
     populate: true,
   });
-  console.log(currentWindow.id);
   const windows = await chrome.windows.getAll({ populate: true });
-  console.log(windows);
   const tabGroups = await getStorageSyncData();
 
   return {
@@ -108,9 +83,8 @@ const getInitialState = async () => {
 const removeGroupTab = async (groupName, tabUrl) => {
   const options = {};
   const data = await getStorageSyncData(groupName);
-  console.log("background removeGroupTab");
-  console.log(data);
   options[groupName] = data[groupName].filter((el) => el.url !== tabUrl);
+
   chrome.storage.sync.remove(groupName);
 
   if (options[groupName].length === 0) {
@@ -123,9 +97,8 @@ const removeGroupTab = async (groupName, tabUrl) => {
 const changeGroupName = async (prevName, newName) => {
   const options = {};
   const data = await getStorageSyncData(prevName);
-  console.log("background changeGroupName");
-  console.log(data);
   options[newName] = data[prevName];
+
   chrome.storage.sync.remove(prevName);
   chrome.storage.sync.set(options);
 };

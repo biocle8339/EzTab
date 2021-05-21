@@ -1,27 +1,15 @@
+import messageName from "./constants/messageName";
+
 class Model {
   constructor() {
     this._windows = null;
     this._currentWindowId = null;
     this._tabGroups = {};
-    console.log("model constructor");
-    console.log(this._currentWindowId);
-    console.log(this._windows);
-    console.log(this._tabGroups);
 
-    chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+    chrome.runtime.onMessage.addListener((request) => {
       switch (request.name) {
-        // case "init":
-        //   sendResponse({
-        //     name: "initRes",
-        //     payload: {
-        //       currentWindowId: this._currentWindowId,
-        //       windows: this._windows,
-        //       tabGroups: this._tabGroups,
-        //     },
-        //   });
-        //   break;
-        case "storageUpdated":
-          for (let [key, { oldValue, newValue }] of Object.entries(
+        case messageName.STORAGE_UPDATED:
+          for (let [key, { newValue }] of Object.entries(
             request.payload.changes
           )) {
             if (!newValue) {
@@ -31,23 +19,8 @@ class Model {
 
             this._tabGroups[key] = newValue;
           }
-          console.log("model storageUpdated");
-          console.dir(request.payload.changes);
-          break;
-          // case "windowFocusChanged":
-          //   console.log("model windowFocusChanged");
-          //   if (request.payload.windowId > 0) {
-          //     console.log("Before changed " + this._currentWindowId);
-          //     this._currentWindowId = request.payload.windowId;
-          //     console.log("windowId " + this._currentWindowId);
-          //   }
 
-        //   break;
-        default:
-          console.log("Not Valid Request");
-          window.mockConsole(this._currentWindowId);
-          console.log(sender);
-          console.log(request);
+          break;
       }
     });
   }
@@ -62,8 +35,6 @@ class Model {
 
   get tabGroups() {
     const groups = [];
-    console.log("model tabGroups");
-    console.log(this._tabGroups);
 
     for (const [key, value] of Object.entries(this._tabGroups)) {
       groups.push({ groupName: key, tabs: value });
@@ -78,18 +49,12 @@ class Model {
   }
 
   setInitialState(callback) {
-    console.log("model setInitialState");
     chrome.runtime.sendMessage(
       {
-        name: "init",
+        name: messageName.INIT,
         payload: null,
       },
       (res) => {
-        console.log("model init response");
-        console.log(res);
-        console.log("before Changed " + this._currentWindowId);
-        // this._currentWindowId = res.payload.currentWindowId;
-        console.log("after Changed " + this._currentWindowId);
         this._windows = res.payload.windows;
         this._tabGroups = res.payload.tabGroups;
 
@@ -99,9 +64,6 @@ class Model {
   }
 
   sortWindows(windows) {
-    console.log("model sortWindows");
-    console.dir(windows);
-    console.log(this._currentWindowId);
     if (!windows) {
       return null;
     }
@@ -109,8 +71,6 @@ class Model {
     let currentWindow;
     let sortedWindows = windows.filter((window) => {
       if (window.id === this._currentWindowId) {
-        console.log("currentWindow be");
-        console.dir(window);
         currentWindow = window;
       }
 
@@ -122,8 +82,6 @@ class Model {
       isCurrent: this._currentWindowId === window?.id,
       tabs: window?.tabs,
     }));
-    console.log("sortedWindows");
-    console.dir(sortedWindows);
 
     return {
       payload: { windows: sortedWindows },
@@ -139,61 +97,45 @@ class Model {
       return { ...window, tabs };
     });
 
-    console.log("model search");
-    console.dir(this.windows);
-    console.dir(searchedWindows);
     callback(this.sortWindows(searchedWindows));
   }
 
-  // getCurrentWindow() {
-  //   chrome.runtime.sendMessage(
-  //     {
-  //       name: "getCurrentWindow",
-  //       payload: null,
-  //     },
-  //     (res) => {
-  //       callback(res.payload.text);
-  //     }
-  //   );
-  // }
-
   removeWindow(windowId) {
     chrome.runtime.sendMessage({
-      name: "removeWindow",
+      name: messageName.REMOVE_WINDOW,
       payload: { windowId },
     });
   }
 
   changeWindow(windowId) {
     chrome.runtime.sendMessage({
-      name: "changeWindow",
+      name: messageName.CHANGE_WINDOW,
       payload: { windowId },
     });
   }
 
   removeTab(tabId) {
     chrome.runtime.sendMessage({
-      name: "removeTab",
+      name: messageName.REMOVE_TAB,
       payload: { tabId },
     });
   }
 
   changeTab(tabId) {
     chrome.runtime.sendMessage({
-      name: "changeTab",
+      name: messageName.CHANGE_TAB,
       payload: { tabId },
     });
   }
 
   clearAllStorageSyncData() {
     chrome.runtime.sendMessage({
-      name: "clearGroups",
+      name: messageName.CLEAR_GROUPS,
       payload: null,
     });
   }
 
   saveTabsOfWindow(windowId, callback) {
-    console.log("model saveTabsOfWindow");
     const key = new Date().toISOString();
     const options = {};
     const tabs = this._windows
@@ -203,7 +145,7 @@ class Model {
 
     chrome.runtime.sendMessage(
       {
-        name: "saveGroup",
+        name: messageName.SAVE_GROUP,
         payload: options,
       },
       (res) => {
@@ -214,24 +156,23 @@ class Model {
 
   removeGroup(groupName) {
     chrome.runtime.sendMessage({
-      name: "removeGroup",
+      name: messageName.REMOVE_GROUP,
       payload: { groupName },
     });
   }
 
   openGroup(groupName) {
-    console.log("model openGroup " + groupName);
     const url = this._tabGroups[groupName].map((tabGroup) => tabGroup.url);
     chrome.runtime.sendMessage({
-      name: "openGroup",
+      name: messageName.OPEN_GROUP,
       payload: { url },
     });
   }
 
-  changeGroupTitle(prevName, newName, callback) {
+  changeGroupName(prevName, newName, callback) {
     chrome.runtime.sendMessage(
       {
-        name: "changeGroupName",
+        name: messageName.CHANGE_GROUP_NAME,
         payload: { prevName, newName },
       },
       (res) => {
@@ -242,19 +183,18 @@ class Model {
 
   removeGroupTab(groupName, tabUrl) {
     chrome.runtime.sendMessage({
-      name: "removeGroupTab",
+      name: messageName.REMOVE_GROUP_TAB,
       payload: { groupName, tabUrl },
     });
   }
 
   openTab(url) {
     chrome.runtime.sendMessage({
-      name: "openTab",
+      name: messageName.OPEN_TAB,
       payload: { url },
     });
   }
 
-  //이건 아예 유틸로 빼도될거같은데
   _swap(fromIndex, toIndex, array) {
     const temp = array[fromIndex];
     array[fromIndex] = array[toIndex];

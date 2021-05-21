@@ -19,10 +19,7 @@ class View {
   render(name, data) {
     switch (name) {
       case "Current Tabs": {
-        console.log("view render currentTabs");
-        console.dir(data);
         const template = data.payload.windows.reduce((acc, curr) => {
-          console.log(curr);
           return acc + generateTabListTemplate(curr);
         }, "");
 
@@ -80,18 +77,12 @@ class View {
 
         break;
       }
-      case "Tab Usage": {
-        console.log("hi tab usage");
-
-        break;
-      }
       default:
         throw new Error("wrong render name");
     }
   }
 
   resetCurrentTabs() {
-    console.log("view resetCurrentTabs");
     const $children = this.$currentTabs.children;
 
     for (let i = $children.length - 1; i >= 0; i--) {
@@ -109,6 +100,7 @@ class View {
 
   removeTab($elem, callback) {
     const tabId = $elem.dataset.tabId;
+
     getClosestTargetBySelector($elem, ".tab-entry").remove();
     callback(tabId);
   }
@@ -118,6 +110,7 @@ class View {
     const $tabGroup = getClosestTargetBySelector($elem, ".tab-group");
     const tabUrl = $elem.previousElementSibling.dataset.tabUrl;
     const groupName = decodeURIComponent($tabGroup.dataset.groupName);
+
     getClosestTargetBySelector($elem, ".tab-entry").remove();
 
     if ($tabList.length === 0) {
@@ -129,16 +122,16 @@ class View {
 
   openTab($elem, callback) {
     const tabUrl = $elem.nextElementSibling.dataset.tabUrl;
+
     callback(tabUrl);
   }
 
-  changeGroupTitle($elem, callback) {
+  changeGroupName($elem, callback) {
     const $tabGroup = getClosestTargetBySelector($elem, ".tab-group");
     const prevName = decodeURIComponent($tabGroup.dataset.groupName);
     const newName = $elem.querySelector(".group-title").value;
-    console.log("View changeGroupTitle newName " + newName);
     $tabGroup.dataset.groupName = newName;
-    console.log("View changeGroupTitle dataset " + $tabGroup.dataset.groupName);
+
     callback(prevName, newName, this.createToast.bind(this));
   }
 
@@ -158,7 +151,7 @@ class View {
   removeGroup($elem, callback) {
     const $tabGroup = getClosestTargetBySelector($elem, ".tab-group");
     const groupName = decodeURIComponent($tabGroup.dataset.groupName);
-    console.log(groupName);
+
     $tabGroup.remove();
     callback(groupName);
   }
@@ -166,7 +159,7 @@ class View {
   openGroup($elem, callback) {
     const $tabGroup = getClosestTargetBySelector($elem, ".tab-group");
     const groupName = decodeURIComponent($tabGroup.dataset.groupName);
-    console.log("View openGroup decoded groupName " + groupName);
+
     callback(groupName);
   }
 
