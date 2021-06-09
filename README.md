@@ -14,12 +14,12 @@
 - 브라우저 사용시 탭이 많이 켜져있을 때도 유저가 원하는 탭을 빠르게 찾을 수 있게 도와주는 플러그인입니다.
 - 현재 사용하지 않는 탭은 메타데이터만 저장함으로써 컴퓨터 자원을 아낄 수 있게 도와주는 플러그인입니다.
 
-![EzTab Image 1](.\readme_assets\eztab-image1.png)
-![EzTab Image 2](.\readme_assets\eztab-image2.png)
+![EzTab Image 1](./readme_assets/eztab-image1.png)
+![EzTab Image 2](./readme_assets/eztab-image2.png)
 
 # 발표 링크
 
-[![EzTab Presentation Image](.\readme_assets\eztab-presentation-image.png)](https://youtu.be/F8OHnevCS30?t=6731)
+[![EzTab Presentation Image](./readme_assets/eztab-presentation-image.png)](https://youtu.be/F8OHnevCS30?t=6731)
 
 # EzTab의 주요 유저층
 
