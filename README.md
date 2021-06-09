@@ -1,3 +1,14 @@
+# 목차
+  - [EzTab이란?](#-EzTab이란?)
+    * [발표 링크](#-발표-링크)
+  - [EzTab의 주요 유저층](#-EzTab의-주요-유저층)
+  - [EzTab을 만들게 된 동기](#-EzTab을-만들게-된-동기)
+  - [EzTab이 사용자 경험에 기여한 점](#-EzTab이-사용자-경험에-기여한-점)
+  - [개발 과정](#-개발-과정)
+    + [Tech Stack](#-Tech-Stack)
+    + [개발 이슈](#-개발-이슈)
+  - [마지막으로...](#-마지막으로...)
+
 # EzTab이란?
 
 - 브라우저 사용시 탭이 많이 켜져있을 때도 유저가 원하는 탭을 빠르게 찾을 수 있게 도와주는 플러그인입니다.
@@ -29,13 +40,10 @@
 
 # 개발 과정
 
-### Roadmap
+  [Roadmap](https://www.notion.so/3332e5e6df834126abcac61d26b1a1dc)
 
-[](https://www.notion.so/3332e5e6df834126abcac61d26b1a1dc)
 
-### Note
-
-[](https://www.notion.so/b7613b3688384c6fb4f550666adba90e)
+  [Note](https://www.notion.so/b7613b3688384c6fb4f550666adba90e)
 
 ### Tech Stack
 
@@ -64,7 +72,9 @@
 
     **여기서 느꼈던 점이 유명 라이브러리나 프레임워크를 그저 따라하는 것이 아닌 내가 필요한 기능이 있을 때 적재적소에 사용할 수 있어야한다는 것입니다.**
 
-2. 제가 개발을 하던 도중에는 chrome extension manifest v2→ v3로 변경되는 와중이라 몇몇 기능들이 사용이 안되는데 chrome api document에는 안적혀있는 문제가 있었습니다. 또한 기능따라 promise 지원 여부가 달라서 예상치 못한 버그가 종종 발생하였습니다. chrome api 개발 환경이 실시간으로 바뀌는 걸 볼 수 있는 좋은 경험이었습니다.
+2. 변화하는 생태계
+
+    제가 개발을 하던 도중에는 chrome extension manifest v2→ v3로 변경되는 와중이라 몇몇 기능들이 사용이 안되는데 chrome api document에는 안적혀있는 문제가 있었습니다. 또한 기능따라 promise 지원 여부가 달라서 예상치 못한 버그가 종종 발생하였습니다. chrome api 개발 환경이 실시간으로 바뀌는 걸 볼 수 있는 좋은 경험이었습니다.
 
 # 마지막으로...
 
